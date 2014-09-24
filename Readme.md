@@ -46,3 +46,31 @@ Por cada componente que añadamos al compilador añadiremos la entrada correspon
 Hoy por hoy solamente hay una entrada: `lexico`.
 
 `cd /LAB && make lexico` generará y compilará el analizador léxico y lo probará con el archivo demo.c.
+
+# Git
+
+Trateremos de usar Git-flow en la medida de lo posible.
+Como cliente de Git se puede usar SourceTree (gratis, disponible en Windows y Mac) o la consola de comandos.
+
+Usaremos una rama nueva por cada sesión de seminario cuyo nombre será: `seminario/#n` donde #n es el número del seminario (empezando por 1).
+
+Para cada parte que tengamos que entregar crearemos una nueva rama, por ejemplo, la rama `analizador-lexico` para el entregable de mediados de noviembre del analizador léxico.
+
+Uniremos ramas únicamente mediante pull-requests.
+Solamente se unirá una pull-request si todos los miembros del grupo la aprueban (se asume que el autor de la pull-request la aprueba).
+Por favor, sed responsables. No aprobéis una pull-request si no habéis comprobado que funciona como es de esperar.
+Del mismo modo evitemos abrir pull-requests con código que no funcione.
+
+El repositorio lo gestionará Lluís, de modo que nadie más podrá hacer commits a `master` o a alguna de las ramas de entregables.
+
+Las nuevas ramas de entregables partirán de master mientras que las ramas de los seminarios deberán partir de la rama del entregable correspondiente.
+
+Cuando un entregable está terminado se creará una pull-request para unificar su rama con master.
+
+Para contribuir a un entregable se creará una nueva rama a partir del entregable cuyo nombre seguirá la forma: `{entregable}/{nombre-desarrollador}`.
+Esto es: cada desarrollador tendrá una rama propia para cada entregable en la que poder trabajar sin miedo a conflictos a la hora de enviar commits al servidor.
+Una vez el trabajo esté terminado se creará la pull-request para unificar `{entregable}/{nombre-desarrollador}` con `{entregable}`.
+
+Cualquier cosa que no quede clara se puede expresar en los comentarios de los commits o de las pull-request.
+
+El repositorio dispone tanto de Wiki como de Issues, hagamos uso de ambas herramientas para coordinar cosas que sepamos y tareas pendientes.
