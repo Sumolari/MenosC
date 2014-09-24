@@ -1,3 +1,4 @@
 .vagrant
 PDL.sublime-workspace
 *.out
+lex.yy.c
