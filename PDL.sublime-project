@@ -1,0 +1,13 @@
+{
+	"folders": [ {
+		"name": "Compilador",
+		"path": "LAB"
+	}, {
+		"name": "Vagrant",
+		"path": ".",
+		"folder_exclude_patterns": [ "LAB", ".vagrant" ]
+	}, {
+		"follow_symlinks": true,
+		"path": "."
+	} ]
+}
