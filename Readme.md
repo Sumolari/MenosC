@@ -61,12 +61,15 @@ Solamente se unirá una pull-request si todos los miembros del grupo la aprueban
 Por favor, sed responsables. No aprobéis una pull-request si no habéis comprobado que funciona como es de esperar.
 Del mismo modo evitemos abrir pull-requests con código que no funcione.
 
-El repositorio lo gestionará Lluís, de modo que **nadie** haya commits a `master` o ninguna de las ramas.
+El repositorio lo gestionará Lluís, de modo que nadie más podrá hacer commits a `master` o a alguna de las ramas de entregables.
 
 Las nuevas ramas de entregables partirán de master mientras que las ramas de los seminarios deberán partir de la rama del entregable correspondiente.
 
-Cada rama se unirá a su rama padre mediante pull-requests.
 Cuando un entregable está terminado se creará una pull-request para unificar su rama con master.
+
+Para contribuir a un entregable se creará una nueva rama a partir del entregable cuyo nombre seguirá la forma: `{entregable}/{nombre-desarrollador}`.
+Esto es: cada desarrollador tendrá una rama propia para cada entregable en la que poder trabajar sin miedo a conflictos a la hora de enviar commits al servidor.
+Una vez el trabajo esté terminado se creará la pull-request para unificar `{entregable}/{nombre-desarrollador}` con `{entregable}`.
 
 Cualquier cosa que no quede clara se puede expresar en los comentarios de los commits o de las pull-request.
 
