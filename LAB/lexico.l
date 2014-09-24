@@ -21,8 +21,8 @@ signo [+-]
 
 "\n"               {visualizar(0,"");}
 {delimitador}      {ECHO;}
-{identificador}    {visualizar(1,"Identificador:");}
 {palabraReservada} {visualizar(1,"P. Reservada:");}
+{identificador}    {visualizar(1,"Identificador:");}
 {constanteEntera}  {visualizar(1,"Constante Entera:");}
 {comentario}       {visualizar(1,"Comentario:");}
 {signo}            {visualizar(1,"Signo:");}
