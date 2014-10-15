@@ -1,8 +1,8 @@
 /* Subseccion preambulo C */
 %{
 	#include <stdio.h>
+	#include "sintaxis.h"
 	extern FILE *yyin;
-	void visualizar(int opcion, char* texto);
 %}
 
 /* Subseccion de definiciones */
@@ -61,65 +61,63 @@ operadorDecremento \-\-
 aperturaParentesis \(
 cierreParentesis \)
 
-%%
+aperturaLlave \{
+cierreLlave \}
 
-"\n"                               {visualizar(0,"");}
-{delimitador}                      {}
-{tipoEntero}                       {visualizar(1, "Tipo entero:");}
-{tipoBooleano}                     {visualizar(1, "Tipo booleano:");}
-{valorVerdadero}                   {visualizar(1, "Valor verdadero:");}
-{valorFalso}                       {visualizar(1, "Valor falso:");}
-{bucleFor}                         {visualizar(1, "Bucle for:");}
-{condicionIf}                      {visualizar(1, "Condición if:");}
-{condicionElse}                    {visualizar(1, "Condición else:");}
-{funcionRead}                      {visualizar(1, "Función read:");}
-{funcionPrint}                     {visualizar(1, "Función print:");}
-{puntoYComa}                       {visualizar(2, "");}
-{operadorLogicoY}                  {visualizar(1, "Operador Y:");}
-{operadorLogicoO}                  {visualizar(1, "Operador O:");}
-{operadorAsignacion}               {visualizar(1, "Operador ASIGNACIÓN:");}
-{operadorIgualdad}                 {visualizar(1, "Operador IGUALDAD:");}
-{operadorDesigualdad}              {visualizar(1, "Operador DESIGUALDAD:");}
-{operadorRelacionalMayorQue}       {visualizar(1, "Operador MAYOR que:");}
-{operadorRelacionalMenorQue}       {visualizar(1, "Operador MENOR que:");}
-{operadorRelacionalMayorOIgualQue} {visualizar(1, "Operador MAYOR o IGUAL que:");}
-{operadorRelacionalMenorOIgualQue} {visualizar(1, "Operador MENOR o IGUAL que:");}
-{operadorAditivo}                  {visualizar(1, "Operador suma:");}
-{operadorSustractivo}              {visualizar(1, "Operador resta:");}
-{operadorMultiplicativo}           {visualizar(1, "Operador producto:");}
-{operadorDivisivo}                 {visualizar(1, "Operador división:");}
-{operadorUnarioNegacion}           {visualizar(1, "Operador negación:");}
-{operadorIncremento}               {visualizar(1, "Operador incremento:");}
-{operadorDecremento}               {visualizar(1, "Operador decremento:");}
-
-{aperturaParentesis}               {visualizar(3, "Apertura paréntesis: (");}
-{cierreParentesis}                 {visualizar(3, "Cierre paréntesis: )");}
-
-{identificador}                    {visualizar(1, "Identificador:");}
-{constanteEntera}                  {visualizar(1, "Constante Entera:");}
-{comentario}                       {visualizar(1, "Comentario:");}
-.                                  {visualizar(1, "Caracter no Valido:");}
-
+aperturaCorchete \[
+cierreCorchete \]
 
 %%
 
-void visualizar(int opcion, char* texto)
-{
-	switch(opcion){
-		case 0: printf("%3d- Nueva Linea\n",yylineno);
-		break;
-		case 1: printf("%3d- \%s \%s\n",yylineno,texto, yytext);
-		break;
-		case 2:
-		break;
-		case 3: printf("%3d- \%s\n",yylineno,texto);
-		break;
-	}
-}
+"\n"                               { return NEWLINE_; }
+{delimitador}                      { return DELIMITER_; }
+{tipoEntero}                       { return INT_; }
+{tipoBooleano}                     { return BOOL_; }
+{valorVerdadero}                   { return TRUE_; }
+{valorFalso}                       { return FALSE_; }
+{bucleFor}                         { return FOR_; }
+{condicionIf}                      { return IF_; }
+{condicionElse}                    { return ELSE_; }
+{funcionRead}                      { return READ_; }
+{funcionPrint}                     { return PRINT_; }
+{puntoYComa}                       { return SEMICOLON_; }
+{operadorLogicoY}                  { return AND_; }
+{operadorLogicoO}                  { return OR_; }
+{operadorAsignacion}               { return ASSIGN_; }
+{operadorIgualdad}                 { return EQ_; }
+{operadorDesigualdad}              { return NEQ_; }
+{operadorRelacionalMayorQue}       { return GT_; }
+{operadorRelacionalMenorQue}       { return LT_; }
+{operadorRelacionalMayorOIgualQue} { return GEQ_; }
+{operadorRelacionalMenorOIgualQue} { return LEQ_; }
+{operadorAditivo}                  { return ADD_; }
+{operadorSustractivo}              { return SUB_; }
+{operadorMultiplicativo}           { return MUL_; }
+{operadorDivisivo}                 { return DIV_; }
+{operadorUnarioNegacion}           { return NOT_; }
+{operadorIncremento}               { return INC_; }
+{operadorDecremento}               { return DEC_; }
 
-int main (int argc, char **argv)
+{aperturaParentesis}               { return PAOP_; }
+{cierreParentesis}                 { return PACL_; }
+
+{aperturaLlave}                    { return BROP_; }
+{cierreLlave}                      { return BRCL_; }
+
+{aperturaCorchete}                 { return SQBROP_; }
+{cierreCorchete}                   { return SQBRCL_; }
+
+{identificador}                    { return ID_; }
+{constanteEntera}                  { return CTE_; }
+{comentario}                       { return CMNT_; }
+.                                  { yyerror("Caracter Desconocido"); }
+
+
+%%
+
+int main( int argc, char **argv )
 {
 	if ((yyin = fopen (argv[1], "r")) == NULL)
-	fprintf (stderr, "Fichero no valido \%s", argv[1]);
-	yylex();
+		fprintf( stderr, "Fichero no valido \%s", argv[1] );
+	yyparse();
 }

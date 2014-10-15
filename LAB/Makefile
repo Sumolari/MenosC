@@ -18,3 +18,26 @@ testlexico:
 cleanlexico:
 	rm -f lex.yy.c
 	rm -f lexico
+
+sintaxis:
+	rm -f sintaxis.c
+	rm -f sintaxis.h
+	bison -d sintaxis.y -osintaxis.c
+
+testsintaxis:
+	rm -f sintaxis.c
+	rm -f sintaxis.h
+	bison -d sintaxis.y -osintaxis.c
+
+cleansintaxis:
+	rm -f sintaxis.c
+	rm -f sintaxis.h
+
+partePrimera:
+	rm -f sintaxis.c
+	rm -f sintaxis.h
+	bison -d sintaxis.y -osintaxis.c
+	rm -f lex.yy.c
+	rm -f lexico
+	flex -olexico.c lexico.l
+	gcc -oanalizador lexico.c sintaxis.c -lfl
