@@ -2,3 +2,7 @@
 PDL.sublime-workspace
 *.out
 lex.yy.c
+sintaxis.h
+lexico.c
+sintaxis.c
+analizador
