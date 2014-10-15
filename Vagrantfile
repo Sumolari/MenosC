@@ -104,7 +104,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # end
 
   config.vm.provision "shell",
-    inline: "sudo apt-get update && sudo apt-get -q -y install flex"
+    inline: "sudo apt-get update && sudo apt-get -q -y install flex bison"
 
   # Enable provisioning with chef server, specifying the chef server URL,
   # and the path to the validation key (relative to this Vagrantfile).
