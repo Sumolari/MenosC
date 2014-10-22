@@ -8,6 +8,8 @@
 /* Subseccion de definiciones */
 %option yylineno
 
+delimitador [\t \n]+
+
 digito [0-9]
 constanteEntera {digito}+
 
@@ -20,6 +22,8 @@ operadorMultiplicativo \*
 operadorDivisivo \/
 
 %%
+
+{delimitador}                      {}
 
 {operadorAditivo}                  { return ADD_; }
 {operadorSustractivo}              { return SUB_; }

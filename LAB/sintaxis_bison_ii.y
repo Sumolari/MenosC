@@ -5,6 +5,7 @@
 
 %error-verbose
 
+%token DELIMITER_
 %left CTE_
 %left ADD_ SUB_
 %left MUL_ DIV_
@@ -18,6 +19,7 @@ e: e ADD_ e { $$ = $1 + $3; }
 | e MUL_ e { $$ = $1 * $3; }
 | e DIV_ e { $$ = $1 / $3; }
 | PAOP_ e PACL_ { $$ = $2; }
+| PAOP_ error PACL_ { }
 | CTE_ { $$ = $1; }
 
 %%
