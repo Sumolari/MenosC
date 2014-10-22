@@ -6,3 +6,7 @@ sintaxis.h
 lexico.c
 sintaxis.c
 analizador
+sintaxis_bison_ii.c
+sintaxis_bison_ii.h
+analizador_bison_ii
+lexico_bison_ii.c
