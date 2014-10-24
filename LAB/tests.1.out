@@ -1,10 +1,1 @@
-  1- Condición if: if
-  1- Identificador: aA
-  1- Identificador: B
-  2- Nueva Linea
-  2- Bucle for: for
-  2- Identificador: Z
-  2- Identificador: Y
-  3- Nueva Linea
-  3- Identificador: a
-  4- Nueva Linea
+Linea 1: syntax error, unexpected IF_, expecting BROP_
