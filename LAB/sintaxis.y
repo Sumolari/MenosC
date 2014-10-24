@@ -32,8 +32,6 @@
 %token NOT_
 %token OR_
 %token SUB_
-%token NEWLINE_
-%token DELIMITER_
 %token TRUE_
 %token FALSE_
 %token CMNT_
@@ -56,7 +54,7 @@ listaInstrucciones: | listaInstrucciones instruccion;
 instruccion: BROP_ listaInstrucciones BRCL_ |
              instruccionAsignacion |
              instruccionEntradaSalida |
-             instruccionSeleccion
+             instruccionSeleccion |
              instruccionIteracion;
 
 instruccionAsignacion: ID_ ASSIGN_ expresion SEMICOLON_ |
@@ -67,7 +65,7 @@ instruccionEntradaSalida: READ_ PAOP_ ID_ PACL_ SEMICOLON_ |
 
 instruccionSeleccion: IF_ PAOP_ expresion PACL_ instruccion ELSE_ instruccion;
 
-instruccionIteracion: FOR_ PAOP_ expresionOpcional SEMICOLON_ expresion SEMICOLON_ expresionOpcional BRCL_ instruccion;
+instruccionIteracion: FOR_ PAOP_ expresionOpcional SEMICOLON_ expresion SEMICOLON_ expresionOpcional PACL_ instruccion;
 
 expresionOpcional: | expresion | ID_ ASSIGN_ expresion;
 
@@ -92,7 +90,8 @@ expresionUnaria: expresionSufija |
 expresionSufija: ID_ SQBROP_ expresion SQBRCL_ |
                  PAOP_ expresion PACL_ |
                  ID_ |
-                 ID_ operadorIncremento;
+                 ID_ operadorIncremento |
+                 CTE_ | TRUE_ | FALSE_;
 
 operadorLogico: AND_ | OR_;
 operadorIgualdad: EQ_ | NEQ_;

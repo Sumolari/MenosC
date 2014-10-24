@@ -69,7 +69,7 @@ cierreCorchete \]
 
 %%
 
-"\n"                               { return NEWLINE_; }
+"\n"                               {}
 {delimitador}                      {}
 {tipoEntero}                       { return INT_; }
 {tipoBooleano}                     { return BOOL_; }
