@@ -70,7 +70,7 @@ cierreCorchete \]
 %%
 
 "\n"                               { return NEWLINE_; }
-{delimitador}                      { return DELIMITER_; }
+{delimitador}                      {}
 {tipoEntero}                       { return INT_; }
 {tipoBooleano}                     { return BOOL_; }
 {valorVerdadero}                   { return TRUE_; }
