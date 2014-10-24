@@ -40,67 +40,67 @@
 
 %%
 
-programa: BROP_ secuenciaSentencias BRCL_;
+program: BROP_ statementsSequence BRCL_;
 
-secuenciaSentencias: sentencia | secuenciaSentencias sentencia;
+statementsSequence: statement | statementsSequence statement;
 
-sentencia: declaracion | instruccion;
+statement: declaration | instruction;
 
-declaracion: tipoSimple ID_ SEMICOLON_ |
-             tipoSimple ID_ SQBROP_ CTE_ SQBRCL_ SEMICOLON_;
+declaration: simpleType ID_ SEMICOLON_ |
+             simpleType ID_ SQBROP_ CTE_ SQBRCL_ SEMICOLON_;
 
-tipoSimple: INT_ | BOOL_;
+simpleType: INT_ | BOOL_;
 
-listaInstrucciones: | listaInstrucciones instruccion;
+instructionList: | instructionList instruction;
 
-instruccion: BROP_ listaInstrucciones BRCL_ |
-             instruccionAsignacion |
-             instruccionEntradaSalida |
-             instruccionSeleccion
-             instruccionIteracion;
+instruction: BROP_ instructionList BRCL_ |
+             assignmentInstruction |
+             inputOutputInstruction |
+             selectionInstruction |
+             iterationInstruction;
 
-instruccionAsignacion: ID_ ASSIGN_ expresion SEMICOLON_ |
-                       ID_ SQBROP_ expresion SQBRCL_ ASSIGN_ expresion SEMICOLON_;
+assignmentInstruction: ID_ ASSIGN_ expression SEMICOLON_ |
+                       ID_ SQBROP_ expression SQBRCL_ ASSIGN_ expression SEMICOLON_;
 
-instruccionEntradaSalida: READ_ PAOP_ ID_ PACL_ SEMICOLON_ |
-                          PRINT_ PAOP_ expresion PACL_ SEMICOLON_;
+inputOutputInstruction: READ_ PAOP_ ID_ PACL_ SEMICOLON_ |
+                        PRINT_ PAOP_ expression PACL_ SEMICOLON_;
 
-instruccionSeleccion: IF_ PAOP_ expresion PACL_ instruccion ELSE_ instruccion;
+selectionInstruction: IF_ PAOP_ expression PACL_ instruction ELSE_ instruction;
 
-instruccionIteracion: FOR_ PAOP_ expresionOpcional SEMICOLON_ expresion SEMICOLON_ expresionOpcional BRCL_ instruccion;
+iterationInstruction: FOR_ PAOP_ optionalExpression SEMICOLON_ expression SEMICOLON_ optionalExpression BRCL_ instruction;
 
-expresionOpcional: | expresion | ID_ ASSIGN_ expresion;
+optionalExpression: | expression | ID_ ASSIGN_ expression;
 
-expresion: expresionIgualdad | expresion operadorLogico expresionIgualdad;
+expression: equalityExpression | expression logicalOperator equalityExpression;
 
-expresionIgualdad: expresionRelacional |
-                   expresionIgualdad operadorIgualdad expresionRelacional;
+equalityExpression: relationalExpression |
+                    equalityExpression equalityOperator relationalExpression;
 
-expresionRelacional: expresionAditiva |
-                     expresionRelacional operadorRelacional expresionAditiva;
+relationalExpression: additiveExpression |
+                    relationalExpression relationalOperator additiveExpression;
 
-expresionAditiva: expresionMultiplicativa |
-                  expresionAditiva operadorAditivo expresionMultiplicativa;
+additiveExpression: multiplicativeExpression |
+                    additiveExpression additiveOperator multiplicativeExpression;
 
-expresionMultiplicativa: expresionUnaria |
-                         expresionMultiplicativa operadorMultiplicativo expresionUnaria;
+multiplicativeExpression: unaryExpression |
+                          multiplicativeExpression multiplicativeOperator unaryExpression;
 
-expresionUnaria: expresionSufija |
-                 operadorUnario expresionUnaria |
-                 operadorIncremento ID_;
+unaryExpression: suffixedExpression |
+                 unaryOperator unaryExpression |
+                 incrementOperator ID_;
 
-expresionSufija: ID_ SQBROP_ expresion SQBRCL_ |
-                 PAOP_ expresion PACL_ |
+suffixedExpression: ID_ SQBROP_ expression SQBRCL_ |
+                 PAOP_ expression PACL_ |
                  ID_ |
-                 ID_ operadorIncremento;
+                 ID_ incrementOperator;
 
-operadorLogico: AND_ | OR_;
-operadorIgualdad: EQ_ | NEQ_;
-operadorRelacional: GT_ | LT_ | GEQ_ | LEQ_;
-operadorAditivo: ADD_ | SUB_;
-operadorMultiplicativo: MUL_ | DIV_;
-operadorUnario: ADD_ | SUB_ | NOT_;
-operadorIncremento: INC_ | DEC_;
+logicalOperator:        AND_  | OR_;
+equalityOperator:       EQ_   | NEQ_;
+relationalOperator:     GT_   | LT_ | GEQ_ | LEQ_;
+additiveOperator:       ADD_  | SUB_;
+multiplicativeOperator: MUL_  | DIV_;
+unaryOperator:          ADD_  | SUB_ | NOT_;
+incrementOperator:      INC_  | DEC_;
 
 %%
 

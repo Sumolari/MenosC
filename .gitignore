@@ -6,3 +6,5 @@ sintaxis.h
 lexico.c
 sintaxis.c
 analizador
+LAB/mianalizador
+LAB/mianalizador.c
