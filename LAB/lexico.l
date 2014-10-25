@@ -69,8 +69,8 @@ closingBracket \]
 
 %%
 
-"\n"                                { return NEWLINE_; }
-{delimiter}                       { return DELIMITER_; }
+"\n"                                {}
+{delimiter}                       {}
 {integerType}                       { return INT_; }
 {booleanType}                       { return BOOL_; }
 {trueValue}                       { return TRUE_; }

@@ -32,8 +32,6 @@
 %token NOT_
 %token OR_
 %token SUB_
-%token NEWLINE_
-%token DELIMITER_
 %token TRUE_
 %token FALSE_
 %token CMNT_
@@ -67,7 +65,7 @@ inputOutputInstruction: READ_ PAOP_ ID_ PACL_ SEMICOLON_ |
 
 selectionInstruction: IF_ PAOP_ expression PACL_ instruction ELSE_ instruction;
 
-iterationInstruction: FOR_ PAOP_ optionalExpression SEMICOLON_ expression SEMICOLON_ optionalExpression BRCL_ instruction;
+iterationInstruction: FOR_ PAOP_ optionalExpression SEMICOLON_ expression SEMICOLON_ optionalExpression PACL_ instruction;
 
 optionalExpression: | expression | ID_ ASSIGN_ expression;
 
@@ -91,8 +89,8 @@ unaryExpression: suffixedExpression |
 
 suffixedExpression: ID_ SQBROP_ expression SQBRCL_ |
                  PAOP_ expression PACL_ |
-                 ID_ |
-                 ID_ incrementOperator;
+                 ID_ | ID_ incrementOperator |
+                 CTE_ | TRUE_ | FALSE_;
 
 logicalOperator:        AND_  | OR_;
 equalityOperator:       EQ_   | NEQ_;
