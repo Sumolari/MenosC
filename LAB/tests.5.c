@@ -1,2 +1,6 @@
-int valint = 5;
-int intval = 5;
+{
+	int valint;
+	valint = true;
+	 int intval;
+	          intval = true || 5 && 90 + 1;
+}

@@ -1,117 +1,116 @@
 /* Subseccion preambulo C */
 %{
-	#include <stdio.h>
-	#include "sintaxis.h"
-	extern FILE *yyin;
+  #include <stdio.h>
+  #include "sintaxis.h"
+  extern FILE *yyin;
 %}
 
 /* Subseccion de definiciones */
 %option yylineno
 
-delimitador [\t \n]+
+delimiter [\t \n]+
 
-letra [a-zA-Z\_]
-digito [0-9]
-identificador {letra}({letra}|{digito})*
-constanteEntera {digito}+
+letter [a-zA-Z\_]
+digit [0-9]
+identifier {letter}({letter}|{digit})*
+integerConstant {digit}+
 
-tipoEntero int
-tipoBooleano bool
+integerType int
+booleanType bool
 
-valorVerdadero true
-valorFalso false
+trueValue true
+falseValue false
 
-bucleFor for
+forLoop for
 
-condicionIf if
-condicionElse else
+ifCondition if
+elseCondition else
 
-funcionRead read
-funcionPrint print
+readFunction read
+printFunction print
 
-puntoYComa \;
-comentario \/\/[^\n]*\n
-/*signo [+-]*/
+semicolon \;
+comment \/\/[^\n]*\n
+/*sign [+-]*/
 
-operadorLogicoY \&\&
-operadorLogicoO \|\|
+andLogicOperator \&\&
+orLogicOperator \|\|
 
-operadorAsignacion =
+assignmentOperator =
 
-operadorIgualdad ==
-operadorDesigualdad !=
+equalityOperator ==
+inequalityOperator !=
 
-operadorRelacionalMayorQue >
-operadorRelacionalMenorQue <
-operadorRelacionalMayorOIgualQue >=
-operadorRelacionalMenorOIgualQue <=
+moreThanRelationalOperator >
+lessThanRelationalOperator <
+moreThanOrEqualRelationalOperator >=
+lessThanOrEqualRelationalOperator <=
 
-operadorAditivo \+
-operadorSustractivo \-
-operadorMultiplicativo \*
-operadorDivisivo \/
+additiveOperator \+
+substractiveOperator \-
+multiplicativeOperator \*
+divisiveOperator \/
 
-/* operadorUnarioPositivo \+ */
-/* operadorUnarioNegativo \- */
-operadorUnarioNegacion \!
+/* positiveUnaryOperator \+ */
+/* negativeUnaryOperator \- */
+negationUnaryOperator \!
 
-operadorIncremento \+\+
-operadorDecremento \-\-
+incrementOperator \+\+
+decrementOperator \-\-
 
-aperturaParentesis \(
-cierreParentesis \)
+openingParenthesis \(
+closingParenthesis \)
 
-aperturaLlave \{
-cierreLlave \}
+openingBrace \{
+closingBrace \}
 
-aperturaCorchete \[
-cierreCorchete \]
+openingBracket \[
+closingBracket \]
 
 %%
 
-"\n"                               { return NEWLINE_; }
-{delimitador}                      { return DELIMITER_; }
-{tipoEntero}                       { return INT_; }
-{tipoBooleano}                     { return BOOL_; }
-{valorVerdadero}                   { return TRUE_; }
-{valorFalso}                       { return FALSE_; }
-{bucleFor}                         { return FOR_; }
-{condicionIf}                      { return IF_; }
-{condicionElse}                    { return ELSE_; }
-{funcionRead}                      { return READ_; }
-{funcionPrint}                     { return PRINT_; }
-{puntoYComa}                       { return SEMICOLON_; }
-{operadorLogicoY}                  { return AND_; }
-{operadorLogicoO}                  { return OR_; }
-{operadorAsignacion}               { return ASSIGN_; }
-{operadorIgualdad}                 { return EQ_; }
-{operadorDesigualdad}              { return NEQ_; }
-{operadorRelacionalMayorQue}       { return GT_; }
-{operadorRelacionalMenorQue}       { return LT_; }
-{operadorRelacionalMayorOIgualQue} { return GEQ_; }
-{operadorRelacionalMenorOIgualQue} { return LEQ_; }
-{operadorAditivo}                  { return ADD_; }
-{operadorSustractivo}              { return SUB_; }
-{operadorMultiplicativo}           { return MUL_; }
-{operadorDivisivo}                 { return DIV_; }
-{operadorUnarioNegacion}           { return NOT_; }
-{operadorIncremento}               { return INC_; }
-{operadorDecremento}               { return DEC_; }
+"\n"                                {}
+{delimiter}                         {}
+{integerType}                       { return INT_; }
+{booleanType}                       { return BOOL_; }
+{trueValue}                         { return TRUE_; }
+{falseValue}                        { return FALSE_; }
+{forLoop}                           { return FOR_; }
+{ifCondition}                       { return IF_; }
+{elseCondition}                     { return ELSE_; }
+{readFunction}                      { return READ_; }
+{printFunction}                     { return PRINT_; }
+{semicolon}                         { return SEMICOLON_; }
+{andLogicOperator}                  { return AND_; }
+{orLogicOperator}                   { return OR_; }
+{assignmentOperator}                { return ASSIGN_; }
+{equalityOperator}                  { return EQ_; }
+{inequalityOperator}                { return NEQ_; }
+{moreThanRelationalOperator}        { return GT_; }
+{lessThanRelationalOperator}        { return LT_; }
+{moreThanOrEqualRelationalOperator} { return GEQ_; }
+{lessThanOrEqualRelationalOperator} { return LEQ_; }
+{additiveOperator}                  { return ADD_; }
+{substractiveOperator}              { return SUB_; }
+{multiplicativeOperator}            { return MUL_; }
+{divisiveOperator}                  { return DIV_; }
+{negationUnaryOperator}             { return NOT_; }
+{incrementOperator}                 { return INC_; }
+{decrementOperator}                 { return DEC_; }
 
-{aperturaParentesis}               { return PAOP_; }
-{cierreParentesis}                 { return PACL_; }
+{openingParenthesis}                { return PAOP_; }
+{closingParenthesis}                { return PACL_; }
 
-{aperturaLlave}                    { return BROP_; }
-{cierreLlave}                      { return BRCL_; }
+{openingBrace}                      { return BROP_; }
+{closingBrace}                      { return BRCL_; }
 
-{aperturaCorchete}                 { return SQBROP_; }
-{cierreCorchete}                   { return SQBRCL_; }
+{openingBracket}                    { return SQBROP_; }
+{closingBracket}                    { return SQBRCL_; }
 
-{identificador}                    { return ID_; }
-{constanteEntera}                  { return CTE_; }
-{comentario}                       { return CMNT_; }
-.                                  { yyerror("Caracter Desconocido"); }
-
+{identifier}                        { return ID_; }
+{integerConstant}                   { return CTE_; }
+{comment}                           { return CMNT_; }
+.                                   { yyerror("Caracter Desconocido"); }
 
 %%
 
