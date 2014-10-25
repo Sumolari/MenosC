@@ -70,15 +70,15 @@ closingBracket \]
 %%
 
 "\n"                                {}
-{delimiter}                       {}
+{delimiter}                         {}
 {integerType}                       { return INT_; }
 {booleanType}                       { return BOOL_; }
-{trueValue}                       { return TRUE_; }
+{trueValue}                         { return TRUE_; }
 {falseValue}                        { return FALSE_; }
 {forLoop}                           { return FOR_; }
 {ifCondition}                       { return IF_; }
 {elseCondition}                     { return ELSE_; }
-{readFunction}                       { return READ_; }
+{readFunction}                      { return READ_; }
 {printFunction}                     { return PRINT_; }
 {semicolon}                         { return SEMICOLON_; }
 {andLogicOperator}                  { return AND_; }
@@ -104,12 +104,12 @@ closingBracket \]
 {openingBrace}                      { return BROP_; }
 {closingBrace}                      { return BRCL_; }
 
-{openingBracket}                  { return SQBROP_; }
+{openingBracket}                    { return SQBROP_; }
 {closingBracket}                    { return SQBRCL_; }
 
-{identifier}                      { return ID_; }
+{identifier}                        { return ID_; }
 {integerConstant}                   { return CTE_; }
-{comment}                         { return CMNT_; }
+{comment}                           { return CMNT_; }
 .                                   { yyerror("Caracter Desconocido"); }
 
 %%
