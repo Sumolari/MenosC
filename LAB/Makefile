@@ -56,6 +56,12 @@ seminarioBisonII:
 	flex -olexico_bison_ii.c lexico_bison_ii.l
 	gcc -oanalizador_bison_ii lexico_bison_ii.c sintaxis_bison_ii.c -lfl
 
+cleanBisonII:
+	rm -f sintaxis_bison_ii.c
+	rm -f sintaxis_bison_ii.h
+	rm -f lex.yy.c
+	rm -f lexico_bison_ii
+
 testSeminarioBisonII:
 	rm -f sintaxis_bison_ii.c
 	rm -f sintaxis_bison_ii.h
