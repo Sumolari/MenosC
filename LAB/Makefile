@@ -72,3 +72,5 @@ testSeminarioBisonII:
 	./analizador_bison_ii bison_ii.tests.6.c | diff bison_ii.tests.6.out -
 	./analizador_bison_ii bison_ii.tests.7.c | diff bison_ii.tests.7.out -
 	./analizador_bison_ii bison_ii.tests.8.c | diff bison_ii.tests.8.out -
+	./analizador_bison_ii bison_ii.tests.9.c | diff bison_ii.tests.9.out - #es normal que salga un "Floating point exception"
+	./analizador_bison_ii bison_ii.tests.10.c | diff bison_ii.tests.10.out -
