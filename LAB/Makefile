@@ -38,6 +38,10 @@ test-sintaxis:
 	./analizador ./lexico_sintactico_tests/tests.10.c | diff ./lexico_sintactico_tests/tests.10.out -
 	./analizador ./lexico_sintactico_tests/tests.11.c | diff ./lexico_sintactico_tests/tests.11.out -
 	./analizador ./lexico_sintactico_tests/tests.12.c | diff ./lexico_sintactico_tests/tests.12.out -
+	./analizador ./lab_ejemplos_secretos/a00.c | diff ./lab_ejemplos_secretos/a00.out -
+	./analizador ./lab_ejemplos_secretos/a01.c | diff ./lab_ejemplos_secretos/a01.out -
+	./analizador ./lab_ejemplos_secretos/a02.c | diff ./lab_ejemplos_secretos/a02.out -
+	./analizador ./lab_ejemplos_secretos/a03.c | diff ./lab_ejemplos_secretos/a03.out -
 
 clean-sintaxis:
 	rm -f sintaxis.c

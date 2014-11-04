@@ -108,7 +108,7 @@ closingBracket \]
 
 {identifier}                        { return ID_; }
 {integerConstant}                   { return CTE_; }
-{comment}                           { return CMNT_; }
+{comment}                           { }
 .                                   { yyerror("Caracter Desconocido"); }
 
 %%
