@@ -2,7 +2,6 @@
 %{
   #include <stdio.h>
   #include "sintaxis.h"
-  extern FILE *yyin;
 %}
 
 /* Subseccion de definiciones */
@@ -113,10 +112,3 @@ closingBracket \]
 .                                   { yyerror("Caracter Desconocido"); }
 
 %%
-
-int main( int argc, char **argv )
-{
-	if ((yyin = fopen (argv[1], "r")) == NULL)
-		fprintf( stderr, "Fichero no valido \%s", argv[1] );
-	yyparse();
-}
