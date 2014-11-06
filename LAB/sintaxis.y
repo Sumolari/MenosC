@@ -1,6 +1,6 @@
 %{
 	#include <stdio.h>
-	extern int yylineno;
+	#include "header.h"
 %}
 
 %error-verbose
@@ -101,12 +101,3 @@ unaryOperator:          ADD_  | SUB_ | NOT_;
 incrementOperator:      INC_  | DEC_;
 
 %%
-
-/**
- * Llamada por yyparse ante un error
- * @param {char*} s Mensaje de error.
- */
-yyerror( char *s )
-{
-	printf( "Linea %d: %s\n", yylineno, s );
-}
