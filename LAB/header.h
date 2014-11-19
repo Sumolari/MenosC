@@ -6,8 +6,13 @@
 #ifndef _HEADER_H
 #define _HEADER_H
 /****************************************************** Constantes generales */
+// El tipo ĺogico bool se representa nuḿericamente como un entero: con el
+// valor 0, para el caso falso, y 1, para el caso verdad.
 #define TRUE  1
 #define FALSE 0
+// La talla de los tipos simples, entero y l ́ogico, debe estar definida en la
+// constante talla tipo simple= 1.
+#define TALLA_TIPO_SIMPLE 1
 /************************************* Variables externas definidas en el AL */
 extern FILE *yyin;
 extern int   yylineno;
@@ -19,3 +24,8 @@ extern int numErrores;              /* Contador del numero de errores        */
 
 #endif  /* _HEADER_H */
 /*****************************************************************************/
+char *sub14( char *original ) {
+	char copy[15] = { 0 };
+	strncpy( copy, $2, sizeof(copy) - 1 );
+	return copy;
+}

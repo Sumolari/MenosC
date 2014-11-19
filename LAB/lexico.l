@@ -13,6 +13,7 @@ letter [a-zA-Z\_]
 digit [0-9]
 identifier {letter}({letter}|{digit})*
 integerConstant {digit}+
+floatConstant ({digit}+)?\.{digit}+
 
 integerType int
 booleanType bool
@@ -72,8 +73,8 @@ closingBracket \]
 {delimiter}                         {}
 {integerType}                       { return INT_; }
 {booleanType}                       { return BOOL_; }
-{trueValue}                         { return TRUE_; }
-{falseValue}                        { return FALSE_; }
+{trueValue}                         { yylval.cent = 1; return TRUE_; }
+{falseValue}                        { yylval.cent = 0; return FALSE_; }
 {forLoop}                           { return FOR_; }
 {ifCondition}                       { return IF_; }
 {elseCondition}                     { return ELSE_; }
@@ -89,11 +90,11 @@ closingBracket \]
 {lessThanRelationalOperator}        { return LT_; }
 {moreThanOrEqualRelationalOperator} { return GEQ_; }
 {lessThanOrEqualRelationalOperator} { return LEQ_; }
-{additiveOperator}                  { return ADD_; }
-{substractiveOperator}              { return SUB_; }
+{additiveOperator}                  { yylval.isNot = 0; return ADD_; }
+{substractiveOperator}              { yylval.isNot = 0; return SUB_; }
 {multiplicativeOperator}            { return MUL_; }
 {divisiveOperator}                  { return DIV_; }
-{negationUnaryOperator}             { return NOT_; }
+{negationUnaryOperator}             { yylval.isNot = 1; return NOT_; }
 {incrementOperator}                 { return INC_; }
 {decrementOperator}                 { return DEC_; }
 
@@ -106,8 +107,17 @@ closingBracket \]
 {openingBracket}                    { return SQBROP_; }
 {closingBracket}                    { return SQBRCL_; }
 
-{identifier}                        { return ID_; }
-{integerConstant}                   { return CTE_; }
+{identifier}                        { yylval.ident = yytext; return ID_; }
+{integerConstant}                   {
+										yylval.cent = atoi( yytext );
+										return CTE_;
+									}
+// Si el analizador l exico encuentra una constante real se debe devolver su
+// valor entero truncado.
+{floatConstant}						{
+										yylval.cent = atoi( yytext );
+										return CTE_;
+									}
 {comment}                           { }
 .                                   { yyerror("Caracter Desconocido"); }
 

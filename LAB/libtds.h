@@ -27,22 +27,41 @@ typedef struct simb /******************************** Estructura para la TDS */
 
 /************************************* Operaciones para la gestion de la TDS */
 int insertarTSimpleTDS(char *nom, int tipo, int desp) ;
-/* Inserta en la TDS toda la informacion asociada con un simbolo de tipo 
-   simple: nombre, "nom"; tipo, "tipo" y desplazamiento relativo en el 
-   segmento de variables, "desp". Si el identificador ya existe devuelve 
+/* Inserta en la TDS toda la informacion asociada con un simbolo de tipo
+   simple: nombre, "nom"; tipo, "tipo" y desplazamiento relativo en el
+   segmento de variables, "desp". Si el identificador ya existe devuelve
    el valor "FALSE=0" ("TRUE=1" en caso contrario).                          */
 
 int insertarTVectorTDS(char *nom, int tipo, int desp, int telem, int nelem) ;
-/* Inserta en la TDS toda la informacion asociada con un simbolo de tipo 
-   vector: nombre, "nom"; tipo, "tipo"; desplazamiento relativo en el 
-   segmento de variables, "desp"; tipo de los elementos, "telem" y numero de 
-   elemnetos, "nelem". Si el identificador ya existe devuelve el valor 
+/* Inserta en la TDS toda la informacion asociada con un simbolo de tipo
+   vector: nombre, "nom"; tipo, "tipo"; desplazamiento relativo en el
+   segmento de variables, "desp"; tipo de los elementos, "telem" y numero de
+   elemnetos, "nelem". Si el identificador ya existe devuelve el valor
    "FALSE=0" ("TRUE=1" en caso contrario).                                   */
 
 SIMB obtenerTDS (char *nom) ;
 /* Obtiene toda la informacion asociada con un objeto de nombre "nom" y la
-   devuelve en una estructura de tipo "SIMB". Si el objeto no está declarado, 
+   devuelve en una estructura de tipo "SIMB". Si el objeto no está declarado,
    devuelve "T_ERROR" en el campo "tipo".                                    */
+
+int existeTDS(char *nom) {
+	SIMB s = obtenerTDS(nom);
+	return s.tipo != T_ERROR;
+}
+
+int comprobarTipo( char *nom, int tipo_esperado ) {
+	char *corto = sub14( nom );
+	if ( !existeTDS( corto ) ) {
+		yyerror( "Variable no declarada" );
+		return 0
+	}
+	// Comprobar que el tipo es compatible.
+	if ( obtenerTDS( corto ).tipo != expression.tipo ) {
+		yyerror( "Tipo incompatible" );
+		return 0
+	}
+	return 1;
+}
 
 void mostrarTDS () ;
 /* Muestra toda la informacion de la TDS.                                    */
