@@ -1,6 +1,6 @@
 /*****************************************************************************/
 /*  Ejemplo de n posible programa principal y su tratamiento de errores.     */
-/*                       Jose Miguel Benedi, 2014-2015 <jbenedi@dsic.upv.es> */
+/*                                                                           */
 /*****************************************************************************/
 #include <stdio.h>
 #include <string.h>
@@ -34,6 +34,6 @@ int main( int argc, char **argv )
 				fprintf( stdout, "\nNumero de errores:      %d\n", numErrores );
 		}
 	}
-	else fprintf (stderr, "Uso: cmc [-v] fichero\n");
+	else fprintf (stderr, "Uso: ./analizador [-v] fichero\n");
 }
 /*****************************************************************************/
