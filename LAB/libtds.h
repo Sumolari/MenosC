@@ -56,7 +56,7 @@ int comprobarTipo( char *nom, int tipo_esperado ) {
 		return 0
 	}
 	// Comprobar que el tipo es compatible.
-	if ( obtenerTDS( corto ).tipo != expression.tipo ) {
+	if ( obtenerTDS( corto ).tipo != tipo_esperado ) {
 		yyerror( "Tipo incompatible" );
 		return 0
 	}

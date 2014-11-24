@@ -96,7 +96,13 @@ assignmentInstruction: ID_ ASSIGN_ expression SEMICOLON_ {
                             // Todas las variables deben declararse antes de ser
                             // utilizadas.
                             // Comprobar que el tipo es compatible.
-                            comprobarTipo( $1, $3 );
+                            if (
+                                comprobarTipo( $1, T_ARRAY ) &&
+                                comprobarTipo( $3, T_ENTERO )
+                            ) {
+                                SIMB s = obtenerTDS( sub14( $1 ) );
+                                comprobarTipo( $6, s.telem );
+                            }
                        };
 
 inputOutputInstruction: READ_ PAOP_ ID_ PACL_ SEMICOLON_ {
@@ -181,10 +187,10 @@ unaryExpression: suffixedExpression |
                         // Todas las variables deben declararse antes de ser
                         // utilizadas.
                         // Comprobar que el tipo es compatible.
-                        if ( $2 ) {
-                            comprobarTipo( $1, T_LOGICO );
+                        if ( $1 ) {
+                            comprobarTipo( $2, T_LOGICO );
                         } else {
-                            comprobarTipo( $1, T_ENTERO );
+                            comprobarTipo( $2, T_ENTERO );
                         }
                  } |
                  incrementOperator ID_ {
@@ -199,7 +205,7 @@ suffixedExpression: ID_ SQBROP_ expression SQBRCL_ {
                         // utilizadas.
                         // Comprobar que el tipo es compatible.
                         if (
-                            comprobarTipo( $2, T_ARRAY ) &&
+                            comprobarTipo( $1, T_ARRAY ) &&
                             comprobarTipo( $3, T_ENTERO )
                         ) {
                             SIMB s = obtenerTDS( sub14( $1 ) );
@@ -208,7 +214,7 @@ suffixedExpression: ID_ SQBROP_ expression SQBRCL_ {
                             $$ = T_ERROR;
                         }
                     } |
-                    PAOP_ expression PACL_ | { $$ = $2 }
+                    PAOP_ expression PACL_ { $$ = $2 } |
                     ID_ {
                         // Todas las variables deben declararse antes de ser
                         // utilizadas.
