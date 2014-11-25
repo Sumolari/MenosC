@@ -27,8 +27,9 @@
 	else
 		numero = 5+5;
 
-	if(numero>=4)numero=3;
-	else numero[7]=5+5;
+	if(numero[3]>=4)numero=3;
+	else
+		numero[7]=5;
 
 	if(numero>=4)numero=3;else numero=5+5;
 }
