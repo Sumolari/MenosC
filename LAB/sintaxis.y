@@ -71,25 +71,27 @@ declaration: simpleType ID_ SEMICOLON_ {
 
                 // TODO: Verificar que la variable no existe ya.
 
-                /*
-                if ( existeTDS( $2 ) ) {
-                    //yyerror( "Redeclaracion de variable" );
-                } else {
-                    */
-                    insertarTSimpleTDS( $2, $1, dvar );
+                if ( insertarTSimpleTDS( $2, $1, dvar ) ) {
                     dvar += TALLA_TIPO_SIMPLE;
-                //}
+                } else {
+                    yyerror( "Redeclaracion de variable" );
+                }
              } |
              simpleType ID_ SQBROP_ CTE_ SQBRCL_ SEMICOLON_ {
                 // El número de elementos de un vector debe ser un entero
                 // positivo.
                 if ( $4 < 1 ) {
                     yyerror( "Numero de elementos invalido" );
+                    insertarTSimpleTDS( $2, T_ERROR, 0 );
+                } else {
+                    // En los identificadores solo los 14 primeros caracteres son
+                    // significativos.
+                    if ( insertarTVectorTDS( $2, T_ARRAY, dvar, $1, $4 ) ) {
+                        dvar += $4 * TALLA_TIPO_SIMPLE;
+                    } else {
+                        yyerror( "Redeclaracion de variable" );
+                    }
                 }
-                // En los identificadores solo los 14 primeros caracteres son
-                // significativos.
-                insertarTVectorTDS( $2, T_ARRAY, dvar, $1, $4 );
-                dvar += $4 * TALLA_TIPO_SIMPLE;
              };
 
 simpleType: INT_ {
@@ -130,13 +132,13 @@ inputOutputInstruction: READ_ PAOP_ ID_ PACL_ SEMICOLON_ {
                             // Todas las variables deben declararse antes de ser
                             // utilizadas.
                             // Comprobar que el tipo es compatible.
-                            //comprobarTipo( $3, $READ_ESPERADO );
+                            comprobarTipo( $3, T_ENTERO );
                         } |
                         PRINT_ PAOP_ expression PACL_ SEMICOLON_ {
                             // Todas las variables deben declararse antes de ser
                             // utilizadas.
                             // Comprobar que el tipo es compatible.
-                            //comprobarTipo( $3, $PRINT_ESPERADO );
+                            tiposEquivalentes( $3, T_ENTERO );
                         };
 
 selectionInstruction: IF_ PAOP_ expression PACL_ instruction ELSE_ instruction {
