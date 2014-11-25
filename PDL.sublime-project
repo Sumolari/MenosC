@@ -1,13 +1,10 @@
 {
 	"folders": [ {
-		"name": "Tests Bison II",
-		"path": "LAB/bison_ii_tests"
+		"name": "Tests",
+		"path": "LAB/tests"
 	}, {
-		"name": "Tests Léxico-Sintáctico",
-		"path": "LAB/lexico_sintactico_tests"
-	}, {
-		"name": "Tests Secretos",
-		"path": "LAB/lab_ejemplos_secretos"
+		"name": "Tests (LAB)",
+		"path": "LAB/lab_tests"
 	}, {
 		"name": "Compilador",
 		"path": "LAB",
