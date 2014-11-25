@@ -47,33 +47,9 @@ SIMB obtenerTDS (char *nom) ;
 void mostrarTDS () ;
 /* Muestra toda la informacion de la TDS.                                    */
 
-int existeTDS(char *nom) {
-	SIMB s = obtenerTDS(nom);
-	return s.tipo != T_ERROR;
-}
+int existeTDS(char *nom);
 
-int comprobarTipo( char *nom, int tipo_esperado ) {
-
-	if ( !existeTDS( nom ) ) {
-		yyerror( "Variable no declarada" );
-		return 0;
-	}
-
-	// Comprobar que el tipo es compatible.
-	if ( obtenerTDS( nom ).tipo != tipo_esperado ) {
-		if ( verbosidad == TRUE ) {
-			printf(
-				"Tipo incompatible: se esperaba %d pero %s es %d\n",
-				tipo_esperado,
-				nom,
-				obtenerTDS( nom ).tipo
-			);
-		}
-		yyerror( "Tipo incompatible" );
-		return 0;
-	}
-	return 1;
-}
+int comprobarTipo( char *nom, int tipo_esperado );
 
 #endif  /* _LIBTDS_H */
 /*****************************************************************************/
