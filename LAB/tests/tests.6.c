@@ -17,18 +17,18 @@
 
 	numero = 30;
 
-	if ( numero >= 4 )
-		numero = 3;
+	if ( numero[3] >= 4 )
+		numero[6] = 3;
 	else
-		numero = 5 + 5;
+		numero[5] = 5 + 5;
 
-	if (numero>=4)
+	if (numero[2]>=4)
 		numero = 3;
 	else
 		numero = 5+5;
 
 	if(numero>=4)numero=3;
-	else numero=5+5;
+	else numero[7]=5+5;
 
 	if(numero>=4)numero=3;else numero=5+5;
 }
