@@ -22,10 +22,7 @@ extern char *yytext;
 extern int verbosidad;              /* Flag para saber si se desea una traza */
 extern int numErrores;              /* Contador del numero de errores        */
 
+int tiposEquivalentes( int tipo_1, int tipo_2 );
+
 #endif  /* _HEADER_H */
 /*****************************************************************************/
-char *sub14( char *original ) {
-	char copy[15] = { 0 };
-	strncpy( copy, $2, sizeof(copy) - 1 );
-	return copy;
-}

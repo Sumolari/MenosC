@@ -44,27 +44,36 @@ SIMB obtenerTDS (char *nom) ;
    devuelve en una estructura de tipo "SIMB". Si el objeto no está declarado,
    devuelve "T_ERROR" en el campo "tipo".                                    */
 
+void mostrarTDS () ;
+/* Muestra toda la informacion de la TDS.                                    */
+
 int existeTDS(char *nom) {
 	SIMB s = obtenerTDS(nom);
 	return s.tipo != T_ERROR;
 }
 
 int comprobarTipo( char *nom, int tipo_esperado ) {
-	char *corto = sub14( nom );
-	if ( !existeTDS( corto ) ) {
+
+	if ( !existeTDS( nom ) ) {
 		yyerror( "Variable no declarada" );
-		return 0
+		return 0;
 	}
+
 	// Comprobar que el tipo es compatible.
-	if ( obtenerTDS( corto ).tipo != tipo_esperado ) {
+	if ( obtenerTDS( nom ).tipo != tipo_esperado ) {
+		if ( verbosidad == TRUE ) {
+			printf(
+				"Tipo incompatible: se esperaba %d pero %s es %d\n",
+				tipo_esperado,
+				nom,
+				obtenerTDS( nom ).tipo
+			);
+		}
 		yyerror( "Tipo incompatible" );
-		return 0
+		return 0;
 	}
 	return 1;
 }
-
-void mostrarTDS () ;
-/* Muestra toda la informacion de la TDS.                                    */
 
 #endif  /* _LIBTDS_H */
 /*****************************************************************************/

@@ -37,3 +37,19 @@ int main( int argc, char **argv )
 	else fprintf (stderr, "Uso: ./analizador [-v] fichero\n");
 }
 /*****************************************************************************/
+int tiposEquivalentes( int tipo_1, int tipo_2 ) {
+	if ( tipo_1 == tipo_2 ) {
+		return 1;
+	} else {
+		if ( verbosidad == TRUE ) {
+			printf(
+				"Tipo incompatible: se esperaba %d pero se ha encontrado %d\n",
+				tipo_2,
+				tipo_1
+			);
+		}
+		yyerror( "Tipo incompatible" );
+		return 0;
+	}
+}
+/*****************************************************************************/

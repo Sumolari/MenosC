@@ -1,6 +1,7 @@
 /* Subseccion preambulo C */
 %{
   #include <stdio.h>
+  #include <string.h>
   #include "sintaxis.h"
 %}
 
@@ -107,13 +108,16 @@ closingBracket \]
 {openingBracket}                    { return SQBROP_; }
 {closingBracket}                    { return SQBRCL_; }
 
-{identifier}                        { yylval.ident = yytext; return ID_; }
+{identifier}                        {
+										char *pnt = malloc( 15 * sizeof(char) );
+										yylval.ident = pnt;
+ 										strncpy( yylval.ident, yytext, 14);
+ 										return ID_;
+ 									}
 {integerConstant}                   {
 										yylval.cent = atoi( yytext );
 										return CTE_;
 									}
-// Si el analizador l exico encuentra una constante real se debe devolver su
-// valor entero truncado.
 {floatConstant}						{
 										yylval.cent = atoi( yytext );
 										return CTE_;

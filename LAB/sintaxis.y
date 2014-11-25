@@ -6,9 +6,10 @@
 
 %union
 {
-    char *ident;  /* Nombre del identificador */
+    char *ident;  /* Nombre del identificador        */
     int cent;     /* Valor de la cte numerica entera */
-    int isNot;    /* Tipo de operador unario */
+    int isNot;    /* Tipo de operador unario         */
+    int tipo;     /* Tipo de la expresion            */
 }
 
 %error-verbose
@@ -45,6 +46,16 @@
 %token <cent> FALSE_
 %token CMNT_
 
+%type <tipo> simpleType
+%type <tipo> expression
+%type <tipo> equalityExpression
+%type <tipo> relationalExpression
+%type <tipo> additiveExpression
+%type <tipo> multiplicativeExpression
+%type <tipo> unaryExpression
+%type <tipo> suffixedExpression
+%type <isNot> unaryOperator
+
 %%
 
 program: BROP_ statementsSequence BRCL_;
@@ -54,10 +65,20 @@ statementsSequence: statement | statementsSequence statement;
 statement: declaration | instruction;
 
 declaration: simpleType ID_ SEMICOLON_ {
+				//yylval.ident = yytext
                 // En los identificadores solo los 14 primeros caracteres son
                 // significativos.
-                insertarTSimpleTDS( sub14( $2 ), $1, dvar );
-                dvar += TALLA_TIPO_SIMPLE;
+
+                // TODO: Verificar que la variable no existe ya.
+
+                /*
+                if ( existeTDS( $2 ) ) {
+                    //yyerror( "Redeclaracion de variable" );
+                } else {
+                    */
+                    insertarTSimpleTDS( $2, $1, dvar );
+                    dvar += TALLA_TIPO_SIMPLE;
+                //}
              } |
              simpleType ID_ SQBROP_ CTE_ SQBRCL_ SEMICOLON_ {
                 // El número de elementos de un vector debe ser un entero
@@ -67,15 +88,15 @@ declaration: simpleType ID_ SEMICOLON_ {
                 }
                 // En los identificadores solo los 14 primeros caracteres son
                 // significativos.
-                insertarTVectorTDS( sub14( $2 ), T_ARRAY, dvar, $1, $4 );
+                insertarTVectorTDS( $2, T_ARRAY, dvar, $1, $4 );
                 dvar += $4 * TALLA_TIPO_SIMPLE;
              };
 
 simpleType: INT_ {
-                $$ = T_ENTERO
+                $$ = T_ENTERO;
             } |
             BOOL_ {
-                $$ = T_LOGICO
+                $$ = T_LOGICO;
             };
 
 instructionList: | instructionList instruction;
@@ -98,10 +119,10 @@ assignmentInstruction: ID_ ASSIGN_ expression SEMICOLON_ {
                             // Comprobar que el tipo es compatible.
                             if (
                                 comprobarTipo( $1, T_ARRAY ) &&
-                                comprobarTipo( $3, T_ENTERO )
+                                tiposEquivalentes( $3, T_ENTERO )
                             ) {
-                                SIMB s = obtenerTDS( sub14( $1 ) );
-                                comprobarTipo( $6, s.telem );
+                                SIMB s = obtenerTDS( $1 );
+                                tiposEquivalentes( $6, s.telem );
                             }
                        };
 
@@ -122,14 +143,14 @@ selectionInstruction: IF_ PAOP_ expression PACL_ instruction ELSE_ instruction {
                             // Todas las variables deben declararse antes de ser
                             // utilizadas.
                             // Comprobar que el tipo es compatible.
-                            comprobarTipo( $3, T_LOGICO );
+                            tiposEquivalentes( $3, T_LOGICO );
                        };
 
 iterationInstruction: FOR_ PAOP_ optionalExpression SEMICOLON_ expression SEMICOLON_ optionalExpression PACL_ instruction {
                             // Todas las variables deben declararse antes de ser
                             // utilizadas.
                             // Comprobar que el tipo es compatible.
-                            comprobarTipo( $5, T_LOGICO );
+                            tiposEquivalentes( $5, T_LOGICO );
                        };
 
 optionalExpression: | expression | ID_ ASSIGN_ expression {
@@ -140,11 +161,17 @@ optionalExpression: | expression | ID_ ASSIGN_ expression {
                     };
 
 expression: equalityExpression | expression logicalOperator equalityExpression {
-                 // Todas las variables deben declararse antes de ser
-                 // utilizadas.
-                 // Comprobar que el tipo es compatible.
-                 comprobarTipo( $1, T_LOGICO );
-                 comprobarTipo( $3, T_LOGICO );
+                // Todas las variables deben declararse antes de ser
+                // utilizadas.
+                // Comprobar que el tipo es compatible.
+                if (
+                   tiposEquivalentes( $1, T_LOGICO ) &&
+                   tiposEquivalentes( $3, T_LOGICO )
+                ) {
+                    $$ = T_LOGICO;
+                } else {
+                    $$ = T_ERROR;
+                }
             };
 
 equalityExpression: relationalExpression |
@@ -152,7 +179,11 @@ equalityExpression: relationalExpression |
                         // Todas las variables deben declararse antes de ser
                         // utilizadas.
                         // Comprobar que el tipo es compatible.
-                        comprobarTipo( $1, $3 );
+                        if ( tiposEquivalentes( $1, $3 ) ) {
+                            $$ = T_LOGICO;
+                        } else {
+                            $$ = T_ERROR;
+                        }
                     };
 
 relationalExpression: additiveExpression |
@@ -160,8 +191,14 @@ relationalExpression: additiveExpression |
                         // Todas las variables deben declararse antes de ser
                         // utilizadas.
                         // Comprobar que el tipo es compatible.
-                        comprobarTipo( $1, T_ENTERO );
-                        comprobarTipo( $3, T_ENTERO );
+                        if (
+                            tiposEquivalentes( $1, T_ENTERO ) &&
+                            tiposEquivalentes( $3, T_ENTERO )
+                        ) {
+                            $$ = T_LOGICO;
+                        } else {
+                            $$ = T_ERROR;
+                        }
                     };
 
 additiveExpression: multiplicativeExpression |
@@ -169,8 +206,14 @@ additiveExpression: multiplicativeExpression |
                          // Todas las variables deben declararse antes de ser
                          // utilizadas.
                          // Comprobar que el tipo es compatible.
-                         comprobarTipo( $1, T_ENTERO );
-                         comprobarTipo( $3, T_ENTERO );
+                         if (
+                            tiposEquivalentes( $1, T_ENTERO ) &&
+                            tiposEquivalentes( $3, T_ENTERO )
+                        ) {
+                            $$ = T_ENTERO;
+                        } else {
+                            $$ = T_ERROR;
+                        }
                     };
 
 multiplicativeExpression: unaryExpression |
@@ -178,8 +221,14 @@ multiplicativeExpression: unaryExpression |
                             // Todas las variables deben declararse antes de ser
                             // utilizadas.
                             // Comprobar que el tipo es compatible.
-                            comprobarTipo( $1, T_ENTERO );
-                            comprobarTipo( $3, T_ENTERO );
+                            if (
+                                tiposEquivalentes( $1, T_ENTERO ) &&
+                                tiposEquivalentes( $3, T_ENTERO )
+                            ) {
+                                $$ = T_ENTERO;
+                            } else {
+                                $$ = T_ERROR;
+                            }
                          };
 
 unaryExpression: suffixedExpression |
@@ -188,16 +237,28 @@ unaryExpression: suffixedExpression |
                         // utilizadas.
                         // Comprobar que el tipo es compatible.
                         if ( $1 ) {
-                            comprobarTipo( $2, T_LOGICO );
+                            if ( tiposEquivalentes( $2, T_LOGICO ) ) {
+                                $$ = T_LOGICO;
+                            } else {
+                                $$ = T_ERROR;
+                            }
                         } else {
-                            comprobarTipo( $2, T_ENTERO );
+                            if ( tiposEquivalentes( $2, T_ENTERO ) ) {
+                                $$ = T_ENTERO;
+                            } else {
+                                $$ = T_ERROR;
+                            }
                         }
                  } |
                  incrementOperator ID_ {
                         // Todas las variables deben declararse antes de ser
                         // utilizadas.
                         // Comprobar que el tipo es compatible.
-                        comprobarTipo( $2, T_ENTERO );
+                        if ( comprobarTipo( $2, T_ENTERO ) ) {
+                            $$ = T_ENTERO;
+                        } else {
+                            $$ = T_ERROR;
+                        }
                  };
 
 suffixedExpression: ID_ SQBROP_ expression SQBRCL_ {
@@ -206,21 +267,21 @@ suffixedExpression: ID_ SQBROP_ expression SQBRCL_ {
                         // Comprobar que el tipo es compatible.
                         if (
                             comprobarTipo( $1, T_ARRAY ) &&
-                            comprobarTipo( $3, T_ENTERO )
+                            tiposEquivalentes( $3, T_ENTERO )
                         ) {
-                            SIMB s = obtenerTDS( sub14( $1 ) );
+                            SIMB s = obtenerTDS( $1 );
                             $$ = s.telem;
                         } else {
                             $$ = T_ERROR;
                         }
                     } |
-                    PAOP_ expression PACL_ { $$ = $2 } |
+                    PAOP_ expression PACL_ { $$ = $2; } |
                     ID_ {
                         // Todas las variables deben declararse antes de ser
                         // utilizadas.
                         // Comprobar que el tipo es compatible.
-                        if ( existeTDS( sub14( $1 ) ) ) {
-                            SIMB s = obtenerTDS( sub14( $1 ) );
+                        if ( existeTDS( $1 ) ) {
+                            SIMB s = obtenerTDS( $1 );
                             $$ = s.tipo;
                         } else {
                             $$ = T_ERROR;
@@ -236,9 +297,9 @@ suffixedExpression: ID_ SQBROP_ expression SQBRCL_ {
                             $$ = T_ERROR;
                         }
                     } |
-                    CTE_ { $$ = T_ENTERO } |
-                    TRUE_ { $$ = T_LOGICO } |
-                    FALSE_ { $$ = T_LOGICO };
+                    CTE_ { $$ = T_ENTERO; } |
+                    TRUE_ { $$ = T_LOGICO; } |
+                    FALSE_ { $$ = T_LOGICO; };
 
 logicalOperator:        AND_  | OR_;
 equalityOperator:       EQ_   | NEQ_;
