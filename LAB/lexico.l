@@ -109,6 +109,9 @@ closingBracket \]
 {closingBracket}                    { return SQBRCL_; }
 
 {identifier}                        {
+										if ( strlen( yytext ) > 14 ) {
+											yywarn( "Identificador excesivo" );
+										}
 										char *pnt = malloc( 15 * sizeof(char) );
 										yylval.ident = pnt;
  										strncpy( yylval.ident, yytext, 14);
@@ -119,10 +122,11 @@ closingBracket \]
 										return CTE_;
 									}
 {floatConstant}						{
+										yywarn( "Real truncado" );
 										yylval.cent = atoi( yytext );
 										return CTE_;
 									}
 {comment}                           { }
-.                                   { yyerror("Caracter Desconocido"); }
+.                                   { yyerror("Caracter desconocido"); }
 
 %%
