@@ -2,6 +2,32 @@
     #include <stdio.h>
     #include "header.h"
     #include "libtds.h"
+
+    /**
+     * Comprueba que un identificador válido se corresponde con un símbolo de un
+     * tipo dado.
+     * @param  *nom          Nombre del símbolo a comprobar.
+     * @param  tipo_esperado Tipo esperado para el símbolo.
+     * @return               1 si tienen el mismo tipo. 0 de lo contrario.
+     */
+    int comprobarTipo( char *nom, int tipo_esperado );
+
+    /**
+     * Comprueba que ambos tipos son equivalantes, esto es, ambos son del mismo
+     * tipo y NO son de tipo T_ERROR.
+     * @param  tipo_1 Uno de los tipos a comprobar.
+     * @param  tipo_2 Uno de los tipos a comprobar.
+     * @return        1 si tienen el mismo tipo. 0 de lo contrario.
+     */
+    int tiposEquivalentes( int tipo_1, int tipo_2 );
+
+    /**
+     * Devuelve 1 si existe el símbolo en la tabla de símbolos ó 0 en caso
+     * contrario.
+     * @param  *nom Nombre del símbolo a comprobar.
+     * @return      1 si el símbolo existe. 0 de lo contrario.
+     */
+    int existeTDS(char *nom);
 %}
 
 %union
@@ -65,7 +91,7 @@ statementsSequence: statement | statementsSequence statement;
 statement: declaration | instruction;
 
 declaration: simpleType ID_ SEMICOLON_ {
-				//yylval.ident = yytext
+                //yylval.ident = yytext
                 // En los identificadores solo los 14 primeros caracteres son
                 // significativos.
 
@@ -84,8 +110,8 @@ declaration: simpleType ID_ SEMICOLON_ {
                     yyerror( "Numero de elementos invalido" );
                     insertarTSimpleTDS( $2, T_ERROR, 0 );
                 } else {
-                    // En los identificadores solo los 14 primeros caracteres son
-                    // significativos.
+                    // En los identificadores solo los 14 primeros caracteres
+                    // son significativos.
                     if ( insertarTVectorTDS( $2, T_ARRAY, dvar, $1, $4 ) ) {
                         dvar += $4 * TALLA_TIPO_SIMPLE;
                     } else {
@@ -115,7 +141,8 @@ assignmentInstruction: ID_ ASSIGN_ expression SEMICOLON_ {
                             // Comprobar que el tipo es compatible.
                             comprobarTipo( $1, $3 );
                        } |
-                       ID_ SQBROP_ expression SQBRCL_ ASSIGN_ expression SEMICOLON_ {
+                       ID_ SQBROP_ expression SQBRCL_ ASSIGN_ expression
+                                                                    SEMICOLON_ {
                             // Todas las variables deben declararse antes de ser
                             // utilizadas.
                             // Comprobar que el tipo es compatible.
@@ -148,7 +175,8 @@ selectionInstruction: IF_ PAOP_ expression PACL_ instruction ELSE_ instruction {
                             tiposEquivalentes( $3, T_LOGICO );
                        };
 
-iterationInstruction: FOR_ PAOP_ optionalExpression SEMICOLON_ expression SEMICOLON_ optionalExpression PACL_ instruction {
+iterationInstruction: FOR_ PAOP_ optionalExpression SEMICOLON_ expression
+                               SEMICOLON_ optionalExpression PACL_ instruction {
                             // Todas las variables deben declararse antes de ser
                             // utilizadas.
                             // Comprobar que el tipo es compatible.
@@ -204,7 +232,8 @@ relationalExpression: additiveExpression |
                     };
 
 additiveExpression: multiplicativeExpression |
-                    additiveExpression additiveOperator multiplicativeExpression {
+                    additiveExpression additiveOperator
+                                                      multiplicativeExpression {
                          // Todas las variables deben declararse antes de ser
                          // utilizadas.
                          // Comprobar que el tipo es compatible.
@@ -219,7 +248,8 @@ additiveExpression: multiplicativeExpression |
                     };
 
 multiplicativeExpression: unaryExpression |
-                          multiplicativeExpression multiplicativeOperator unaryExpression {
+                          multiplicativeExpression multiplicativeOperator
+                                                               unaryExpression {
                             // Todas las variables deben declararse antes de ser
                             // utilizadas.
                             // Comprobar que el tipo es compatible.
@@ -312,3 +342,55 @@ unaryOperator:          ADD_  | SUB_ | NOT_;
 incrementOperator:      INC_  | DEC_;
 
 %%
+
+int tiposEquivalentes( int tipo_1, int tipo_2 ) {
+    if ( tipo_1 == T_ERROR || tipo_2 == T_ERROR ) {
+        return 0;
+    } if ( tipo_1 == tipo_2 ) {
+        return 1;
+    } else {
+        if ( verbosidad == TRUE ) {
+            printf(
+                "Tipo incompatible: se esperaba %d pero se ha encontrado %d\n",
+                tipo_2,
+                tipo_1
+            );
+        }
+        yyerror( "Tipo incompatible" );
+        return 0;
+    }
+}
+/*****************************************************************************/
+int existeTDS(char *nom) {
+    SIMB s = obtenerTDS(nom);
+    return s.tipo != T_ERROR;
+}
+/*****************************************************************************/
+int comprobarTipo( char *nom, int tipo_esperado ) {
+
+    if ( !existeTDS( nom ) ) {
+        yyerror( "Variable no declarada" );
+        return 0;
+    }
+
+    // Comprobar que el tipo no sea un error.
+    if ( obtenerTDS( nom ).tipo == T_ERROR || tipo_esperado == T_ERROR ) {
+        return 0;
+    }
+
+    // Comprobar que el tipo es compatible.
+    if ( obtenerTDS( nom ).tipo != tipo_esperado ) {
+        if ( verbosidad == TRUE ) {
+            printf(
+                "Tipo incompatible: se esperaba %d pero %s es %d\n",
+                tipo_esperado,
+                nom,
+                obtenerTDS( nom ).tipo
+            );
+        }
+        yyerror( "Tipo incompatible" );
+        return 0;
+    }
+    return 1;
+}
+/*****************************************************************************/

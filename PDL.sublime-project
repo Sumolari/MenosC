@@ -6,9 +6,24 @@
 		"name": "Tests (LAB)",
 		"path": "LAB/lab_tests"
 	}, {
+		"name": "Bin",
+		"path": "LAB/bin"
+	}, {
+		"name": "Headers",
+		"path": "LAB/include"
+	}, {
+		"name": "Libraries",
+		"path": "LAB/lib"
+	}, {
+		"name": "Sources",
+		"path": "LAB/src"
+	}, {
 		"name": "Compilador",
 		"path": "LAB",
-		"folder_exclude_patterns": [ "bison_ii_tests", "lab_ejemplos_secretos" ],
+		"folder_exclude_patterns": [
+			"bison_ii_tests", "lab_tests", "tests", "tmp", "src", "lib",
+			"include", "bin"
+		],
 		"file_exclude_patterns": [ "*.tgz" ]
 	}, {
 		"name": "Vagrant",

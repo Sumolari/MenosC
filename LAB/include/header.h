@@ -18,11 +18,9 @@ extern FILE *yyin;
 extern int   yylineno;
 extern int   yydebug;
 extern char *yytext;
+extern int   si;         /* Desplazamiento relativo en el segmento de código */
 /********************* Variables externas definidas en el Programa Principal */
 extern int verbosidad;              /* Flag para saber si se desea una traza */
 extern int numErrores;              /* Contador del numero de errores        */
-
-int tiposEquivalentes( int tipo_1, int tipo_2 );
-
 #endif  /* _HEADER_H */
 /*****************************************************************************/

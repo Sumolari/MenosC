@@ -2,7 +2,7 @@
 %{
   #include <stdio.h>
   #include <string.h>
-  #include "sintaxis.h"
+  #include "../tmp/sintaxis.h"
 %}
 
 /* Subseccion de definiciones */

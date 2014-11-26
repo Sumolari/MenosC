@@ -1,28 +1,26 @@
 .PHONY: fresh clean all
 
-clean-lexico-build:
-	rm -f lexico
-clean-lexico-intermediate:
-	rm -f lex.yy.c
-clean-lexico: clean-lexico-intermediate clean-lexico-build
 build-lexico:
-	flex -olexico.c lexico.l
-lexico: clean-lexico build-lexico
+	flex -olexico.c src/lexico.l
+	mv lexico.c tmp/
+lexico: clean build-lexico
 
 
-clean-sintaxis:
-	rm -f sintaxis.c
-	rm -f sintaxis.h
 build-sintaxis:
-	bison -d sintaxis.y -osintaxis.c
-sintaxis: clean-sintaxis build-sintaxis
+	bison -osintaxis.c -d src/sintaxis.y
+	mv sintaxis.c tmp/
+	mv sintaxis.h tmp/
+sintaxis: clean build-sintaxis
 
 
+clean-analizer:
+	rm -f analizador
 compile-analizer:
-	gcc -oanalizador principal.c lexico.c sintaxis.c -lfl -ltds -I. -L.
+	gcc -oanalizador src/principal.c tmp/lexico.c tmp/sintaxis.c \
+	                                        -lfl -ltds -lgci -I./include -L./lib
 
 
-build: clean-sintaxis build-sintaxis clean-lexico build-lexico compile-analizer
+build: clean build-sintaxis build-lexico compile-analizer
 
 
 test:
@@ -47,9 +45,28 @@ test:
 	./analizador ./lab_tests/b02.c  | diff ./lab_tests/b02.out -
 	./analizador ./lab_tests/b03.c  | diff ./lab_tests/b03.out -
 	./analizador ./lab_tests/b04.c  | diff ./lab_tests/b04.out -
+	#./analizador ./lab_tests/c00.c  | diff ./lab_tests/c00.out -
+	#./analizador ./lab_tests/c01.c  | diff ./lab_tests/c01.out -
+	#./analizador ./lab_tests/c02.c  | diff ./lab_tests/c02.out -
+	#./analizador ./lab_tests/c03.c  | diff ./lab_tests/c03.out -
+	#./analizador ./lab_tests/c04.c  | diff ./lab_tests/c04.out -
+	#./analizador ./lab_tests/c05.c  | diff ./lab_tests/c05.out -
+	#./analizador ./lab_tests/c06.c  | diff ./lab_tests/c06.out -
 
 
-all: build test
+quicktest: clean build dotest
+quicklabtest: clean build dolabtest
 
 
-clean: clean-lexico clean-sintaxis
+dotest:
+	./analizador ./tests/$(TEST).c  | diff ./tests/$(TEST).out -
+dolabtest:
+	./analizador ./lab_tests/$(TEST).c  | diff ./lab_tests/$(TEST).out -
+
+
+clean-tmp:
+	rm -f tmp/*
+clean: clean-tmp clean-analizer
+
+
+all: clean build test
