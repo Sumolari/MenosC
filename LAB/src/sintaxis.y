@@ -2,6 +2,7 @@
     #include <stdio.h>
     #include "header.h"
     #include "libtds.h"
+    #include "libgci.h"
 
     /**
      * Comprueba que un identificador válido se corresponde con un símbolo de un
@@ -28,14 +29,21 @@
      * @return      1 si el símbolo existe. 0 de lo contrario.
      */
     int existeTDS(char *nom);
+
+    typedef struct {
+        int tipo;
+        int pos;
+    } tipoYPos;
 %}
 
 %union
 {
-    char *ident;  /* Nombre del identificador        */
-    int cent;     /* Valor de la cte numerica entera */
-    int isNot;    /* Tipo de operador unario         */
-    int tipo;     /* Tipo de la expresion            */
+    char *ident;        /* Nombre del identificador         */
+    int cent;           /* Valor de la cte numerica entera  */
+    int unType;         /* Tipo de operador unario          */
+    int tipo;           /* Tipo de la expresion             */
+    int isInc;          /* Cantidad a incrementar           */
+    tipoYPos tipoYPos;  /* Tipo y posicion de una expresion */
 }
 
 %error-verbose
@@ -48,7 +56,7 @@
 %token ASSIGN_
 %token READ_ PRINT_
 %token PAOP_ PACL_
-%token <isNot> ADD_
+%token <unType> ADD_
 %token AND_
 %token BOOL_
 %token <cent> CTE_
@@ -65,22 +73,22 @@
 %token LT_
 %token MUL_
 %token NEQ_
-%token <isNot> NOT_
+%token <unType> NOT_
 %token OR_
-%token <isNot> SUB_
+%token <unType> SUB_
 %token <cent> TRUE_
 %token <cent> FALSE_
 %token CMNT_
 
-%type <tipo> simpleType
-%type <tipo> expression
-%type <tipo> equalityExpression
-%type <tipo> relationalExpression
-%type <tipo> additiveExpression
-%type <tipo> multiplicativeExpression
-%type <tipo> unaryExpression
-%type <tipo> suffixedExpression
-%type <isNot> unaryOperator
+%type <tipoYPos> simpleType
+%type <tipoYPos> expression
+%type <tipoYPos> equalityExpression
+%type <tipoYPos> relationalExpression
+%type <tipoYPos> additiveExpression
+%type <tipoYPos> multiplicativeExpression
+%type <tipoYPos> unaryExpression
+%type <tipoYPos> suffixedExpression
+%type <unType> unaryOperator
 
 %%
 
@@ -269,16 +277,42 @@ unaryExpression: suffixedExpression |
                         // utilizadas.
                         // Comprobar que el tipo es compatible.
                         if ( $1 ) {
-                            if ( tiposEquivalentes( $2, T_LOGICO ) ) {
-                                $$ = T_LOGICO;
+                            if ( tiposEquivalentes( $2.tipo, T_LOGICO ) ) {
+                                $$.tipo = T_LOGICO;
+                                $$.pos = creaVarTemp();
+                                // !id: inviertes el valor booleano.
+                                emite(
+                                    EDIF,
+                                    crArgEnt( 1 ),
+                                    crArgPos( $2.pos ),
+                                    crArgPos( $$.pos )
+                                );
                             } else {
-                                $$ = T_ERROR;
+                                $$.tipo = T_ERROR;
                             }
                         } else {
                             if ( tiposEquivalentes( $2, T_ENTERO ) ) {
-                                $$ = T_ENTERO;
+                                $$.tipo = T_ENTERO;
+                                $$.pos = creaVarTemp();
+                                if ( $1 == NOP ) {
+                                    // +expresion: no haces nada.
+                                    emite(
+                                        EASIG,
+                                        crArgPos( $2.pos ),
+                                        crArgNul(),
+                                        crArgPos( $$.pos )
+                                    );
+                                } else {
+                                    // -exp: cambias el signo.
+                                    emite(
+                                        ESIG,
+                                        crArgPos( $2.pos ),
+                                        crArgNul(),
+                                        crArgPos( $$.pos )
+                                    );
+                                }
                             } else {
-                                $$ = T_ERROR;
+                                $$.tipo = T_ERROR;
                             }
                         }
                  } |
@@ -287,9 +321,23 @@ unaryExpression: suffixedExpression |
                         // utilizadas.
                         // Comprobar que el tipo es compatible.
                         if ( comprobarTipo( $2, T_ENTERO ) ) {
-                            $$ = T_ENTERO;
+                            SIMB id = obtenerTDS( $2 );
+                            $$.tipo = T_ENTERO;
+                            $$.pos = creaVarTemp();
+                            emite(
+                                ESUM,
+                                crArgPos( id.desp ),
+                                crArgEnt( $1 ),
+                                crArgPos( id.desp )
+                            );
+                            emite(
+                                EASIG,
+                                crArgPos( id.desp ),
+                                crArgNul(),
+                                crArgPos( $$.pos )
+                            );
                         } else {
-                            $$ = T_ERROR;
+                            $$.tipo = T_ERROR;
                         }
                  };
 
@@ -299,47 +347,90 @@ suffixedExpression: ID_ SQBROP_ expression SQBRCL_ {
                         // Comprobar que el tipo es compatible.
                         if (
                             comprobarTipo( $1, T_ARRAY ) &&
-                            tiposEquivalentes( $3, T_ENTERO )
+                            tiposEquivalentes( $3.tipo, T_ENTERO )
                         ) {
-                            SIMB s = obtenerTDS( $1 );
-                            $$ = s.telem;
+                            SIMB id = obtenerTDS( $1 );
+                            $$.tipo = id.telem;
+                            $$.pos = creaVarTemp();
+                            emite(
+                                EAV,
+                                crArgPos( id.desp ),
+                                crArgPos( expresion.pos ),
+                                crArgPos( $$.pos )
+                            );
                         } else {
-                            $$ = T_ERROR;
+                            $$.tipo = T_ERROR;
                         }
                     } |
-                    PAOP_ expression PACL_ { $$ = $2; } |
+                    PAOP_ expression PACL_ {
+                        $$.tipo = $2.tipo;
+                        $$.pos  = $2.pos;
+                    } |
                     ID_ {
                         // Todas las variables deben declararse antes de ser
                         // utilizadas.
                         // Comprobar que el tipo es compatible.
                         if ( existeTDS( $1 ) ) {
-                            SIMB s = obtenerTDS( $1 );
-                            $$ = s.tipo;
+                            SIMB id = obtenerTDS( $1 );
+                            $$.tipo = id.tipo;
+                            $$.pos = creaVarTemp();
+                            emite(
+                                EASIG,
+                                crArgPos( id.desp ),
+                                crArgNul(),
+                                crArgPos( $$.pos )
+                            );
                         } else {
-                            $$ = T_ERROR;
+                            $$.tipo = T_ERROR;
                         }
                     } |
                     ID_ incrementOperator {
+                        // TODO: ¿La semántica de esto es EXPRESION = ID++ ?
                         // Todas las variables deben declararse antes de ser
                         // utilizadas.
                         // Comprobar que el tipo es compatible.
                         if ( comprobarTipo( $1, T_ENTERO ) ) {
-                            $$ = T_ENTERO;
+                            SIMB id = obtenerTDS ( ID_ );
+                            $$.tipo = T_ENTERO;
+                            $$.pos = creaVarTemp();
+                            emite(
+                                EASIG,
+                                crArgPos( id.desp ),
+                                crArgNul(),
+                                crArgPos( $$.pos )
+                            );
+                            emite(
+                                ESUM,
+                                crArgPos( id.desp ),
+                                crArgEnt( $2 ),
+                                crArgPos( id.desp )
+                            );
                         } else {
-                            $$ = T_ERROR;
+                            $$.tipo = T_ERROR;
                         }
                     } |
-                    CTE_ { $$ = T_ENTERO; } |
-                    TRUE_ { $$ = T_LOGICO; } |
-                    FALSE_ { $$ = T_LOGICO; };
+                    CTE_ {
+                        $$.tipo = T_ENTERO;
+                        $$.pos = creaVarTemp();
+                        emite(
+                            EASIG,
+                            crArgEnt( CTE_ ),
+                            crArgNul(),
+                            crArgPos( $$.pos )
+                        );
+                    } |
+                    TRUE_ { $$.tipo = T_LOGICO; } |
+                    FALSE_ { $$.tipo = T_LOGICO; };
 
 logicalOperator:        AND_  | OR_;
 equalityOperator:       EQ_   | NEQ_;
 relationalOperator:     GT_   | LT_ | GEQ_ | LEQ_;
 additiveOperator:       ADD_  | SUB_;
 multiplicativeOperator: MUL_  | DIV_;
-unaryOperator:          ADD_  | SUB_ | NOT_;
-incrementOperator:      INC_  | DEC_;
+unaryOperator:          ADD_ { $$ = NOP; } |
+                        SUB_ { $$ = ESIG; } |
+                        NOT_ { $$ = NOT; };
+incrementOperator:      INC_ { $$ = 1; } | DEC_ { $$ = -1; };
 
 %%
 
