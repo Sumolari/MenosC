@@ -17,7 +17,7 @@ clean-analizer:
 	rm -f analizador
 compile-analizer:
 	gcc -oanalizador src/principal.c tmp/lexico.c tmp/sintaxis.c \
-	                                        -lfl -ltds -lgci -I./include -L./lib
+	                                        -L./lib -I./include -lfl -ltds -lgci
 
 
 build: clean build-sintaxis build-lexico compile-analizer
