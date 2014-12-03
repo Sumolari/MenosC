@@ -35,7 +35,7 @@ test:
 	./analizador ./tests/tests.9.c  | diff ./tests/tests.9.out -
 	./analizador ./tests/tests.10.c | diff ./tests/tests.10.out -
 	./analizador ./tests/tests.11.c | diff ./tests/tests.11.out -
-	#./analizador ./tests/tests.12.c | diff ./tests/tests.12.out -
+	./analizador ./tests/tests.12.c | diff ./tests/tests.12.out -
 	./analizador ./lab_tests/a00.c  | diff ./lab_tests/a00.out -
 	./analizador ./lab_tests/a01.c  | diff ./lab_tests/a01.out -
 	./analizador ./lab_tests/a02.c  | diff ./lab_tests/a02.out -
