@@ -33,17 +33,19 @@
     typedef struct {
         int tipo;
         int pos;
+        int aux;
     } tipoYPos;
 %}
 
 %union
 {
-    char *ident;        /* Nombre del identificador         */
-    int cent;           /* Valor de la cte numerica entera  */
-    int unType;         /* Tipo de operador unario          */
-    int tipo;           /* Tipo de la expresion             */
-    int isInc;          /* Cantidad a incrementar           */
-    tipoYPos tipoYPos;  /* Tipo y posicion de una expresion */
+    char *ident;        /* Nombre del identificador          */
+    int cent;           /* Valor de la cte numerica entera   */
+    int unType;         /* Tipo de operador unario           */
+    int tipo;           /* Tipo de la expresion              */
+    int isInc;          /* Cantidad a incrementar            */
+    int codOp;          /* Codigo de operacion a ejecutar    */
+    tipoYPos tipoYPos;  /* Tipo y posicion de una expresion  */
 }
 
 %error-verbose
@@ -89,6 +91,10 @@
 %type <tipoYPos> unaryExpression
 %type <tipoYPos> suffixedExpression
 %type <unType> unaryOperator
+%type <codOp> additiveOperator
+%type <codOp> multiplicativeOperator
+%type <codOp> equalityOperator
+%type <codOp> relationalOperator
 
 %%
 
@@ -188,95 +194,260 @@ iterationInstruction: FOR_ PAOP_ optionalExpression SEMICOLON_ expression
                             // Todas las variables deben declararse antes de ser
                             // utilizadas.
                             // Comprobar que el tipo es compatible.
-                            tiposEquivalentes( $5, T_LOGICO );
+                            if ( tiposEquivalentes( $5.tipo, T_LOGICO ) ) {
+                                int ini = si;
+                                int lv = creaLans( si );
+                                emite(
+                                    EIGUAL,
+                                    crArgPos( $5 ),
+                                    crArgEnt( 1 ),
+                                    crArgEtq( lv )
+                                );
+                                int lf = creaLans( si );
+                                emite(
+                                    GOTOS,
+                                    crArgNul(),
+                                    crArgNul(),
+                                    crArgEtq( lf )
+                                );
+                                int aux = si;
+                                emite(
+                                    GOTOS,
+                                    crArgNul(),
+                                    crArgNul(),
+                                    crArgEnt( ini )
+                                );
+                                completaLans( lv, crArgEtq( lv ) );
+                                emite(
+                                    GOTOS,
+                                    crArgNul(),
+                                    crArgNul(),
+                                    crArgEnt( aux )
+                                );
+                                completaLans( lf, crArgEtq( lf ) );
+                            }
                        };
 
-optionalExpression: | expression | ID_ ASSIGN_ expression {
+optionalExpression: | expression {
+                        $$.tipo = $1.tipo;
+                        $$.pos  = $1.pos;
+                    } | ID_ ASSIGN_ expression {
                         // Todas las variables deben declararse antes de ser
                         // utilizadas.
                         // Comprobar que el tipo es compatible.
-                        comprobarTipo( $1, $3 );
+                        if ( comprobarTipo( $1, $3.tipo ) ) {
+                            SIMB id = obtenerTDS( $1 );
+                            emite(
+                                EASIG,
+                                crArgPos( $3 ),
+                                crArgNul(),
+                                crArgPos( id.desp )
+                            );
+                        }
                     };
 
-expression: equalityExpression | expression logicalOperator equalityExpression {
+expression: equalityExpression {
+                $$.tipo = $1.tipo;
+                $$.pos  = $1.pos;
+            } |
+            expression logicalOperator equalityExpression {
                 // Todas las variables deben declararse antes de ser
                 // utilizadas.
                 // Comprobar que el tipo es compatible.
                 if (
-                   tiposEquivalentes( $1, T_LOGICO ) &&
-                   tiposEquivalentes( $3, T_LOGICO )
+                   tiposEquivalentes( $1.tipo, T_LOGICO ) &&
+                   tiposEquivalentes( $3.tipo, T_LOGICO )
                 ) {
-                    $$ = T_LOGICO;
+                    $$.tipo = T_LOGICO;
+                    $$.pos  = creaVarTemp();
+                    $$.aux  = creaLans( si );
+
+                    emite(
+                        EASIG,
+                        crArgEnt( $2 ),
+                        crArgNul(),
+                        crArgPos( $$.pos )
+                    );
+
+                    emite(
+                        EIGUAL,
+                        crArgPos( $1.pos ),
+                        crArgEnt( $2 ),
+                        crArgEtq( $$.aux )
+                    );
+
+                    emite(
+                        EIGUAL,
+                        crArgPos( $3.pos ),
+                        crArgEnt( $2 ),
+                        crArgEtq( $$.aux )
+                    );
+
+                    emite(
+                        EASIG,
+                        crArgEnt( 1 - $2 ),
+                        crArgNul(),
+                        crArgPos( $$.pos )
+                    );
+
+                    completaLans( $$.aux, crArgEtq( $$.aux ) );
                 } else {
-                    $$ = T_ERROR;
+                    $$.tipo = T_ERROR;
                 }
             };
 
-equalityExpression: relationalExpression |
+equalityExpression: relationalExpression {
+                        $$.tipo = $1.tipo;
+                        $$.pos  = $1.pos;
+                    } |
                     equalityExpression equalityOperator relationalExpression {
                         // Todas las variables deben declararse antes de ser
                         // utilizadas.
                         // Comprobar que el tipo es compatible.
-                        if ( tiposEquivalentes( $1, $3 ) ) {
-                            $$ = T_LOGICO;
+                        if ( tiposEquivalentes( $1.tipo, $3.tipo ) ) {
+                            $$.tipo = T_LOGICO;
+                            $$.pos  = creaVarTemp();
+
+                            // Por defecto asumimos que SON iguales...
+                            emite(
+                                EASIG,
+                                crArgEnt( 1 ),
+                                crArgNul(),
+                                crArgPos( $$.pos )
+                            );
+
+                            $$.aux  = creaLans( si );
+                            // Si son iguales, salto...
+                            emite(
+                                $2,
+                                crArgPos( $1.pos ),
+                                crArgPos( $3.pos ),
+                                crArgEtq( $$.aux )
+                            );
+
+                            // Si NO son iguales NO habré saltado y lo pongo 0.
+                            emite(
+                                EASIG,
+                                crArgEnt( 0 ),
+                                crArgNul(),
+                                crArgPos( $$.pos )
+                            );
+
+                            completaLans( $$.aux, crArgEtq( $$.aux ) );
+
                         } else {
-                            $$ = T_ERROR;
+                            $$.tipo = T_ERROR;
                         }
                     };
 
-relationalExpression: additiveExpression |
-                    relationalExpression relationalOperator additiveExpression {
-                        // Todas las variables deben declararse antes de ser
-                        // utilizadas.
-                        // Comprobar que el tipo es compatible.
-                        if (
-                            tiposEquivalentes( $1, T_ENTERO ) &&
-                            tiposEquivalentes( $3, T_ENTERO )
-                        ) {
-                            $$ = T_LOGICO;
-                        } else {
-                            $$ = T_ERROR;
-                        }
-                    };
-
-additiveExpression: multiplicativeExpression |
-                    additiveExpression additiveOperator
-                                                      multiplicativeExpression {
-                         // Todas las variables deben declararse antes de ser
-                         // utilizadas.
-                         // Comprobar que el tipo es compatible.
-                         if (
-                            tiposEquivalentes( $1, T_ENTERO ) &&
-                            tiposEquivalentes( $3, T_ENTERO )
-                        ) {
-                            $$ = T_ENTERO;
-                        } else {
-                            $$ = T_ERROR;
-                        }
-                    };
-
-multiplicativeExpression: unaryExpression |
-                          multiplicativeExpression multiplicativeOperator
-                                                               unaryExpression {
+relationalExpression:   additiveExpression {
+                            $$.tipo = $1.tipo;
+                            $$.pos  = $1.pos;
+                        } |
+                        relationalExpression relationalOperator
+                                                            additiveExpression {
                             // Todas las variables deben declararse antes de ser
                             // utilizadas.
                             // Comprobar que el tipo es compatible.
                             if (
-                                tiposEquivalentes( $1, T_ENTERO ) &&
-                                tiposEquivalentes( $3, T_ENTERO )
+                                tiposEquivalentes( $1.tipo, T_ENTERO ) &&
+                                tiposEquivalentes( $3.tipo, T_ENTERO )
                             ) {
-                                $$ = T_ENTERO;
-                            } else {
-                                $$ = T_ERROR;
-                            }
-                         };
+                                $$.tipo = T_LOGICO;
+                                $$.pos = creaVarTemp();
 
-unaryExpression: suffixedExpression |
-                 unaryOperator unaryExpression {
+                                emite(
+                                    EASIG,
+                                    crArgEnt( 0 ),
+                                    crArgNul(),
+                                    crArgPos( $$.pos )
+                                );
+
+                                $$.aux = creaLans( si );
+
+                                // Si la condicion no se cumple, salto despues.
+                                emite(
+                                    $2,
+                                    crArgPos( $1.pos ),
+                                    crArgPos( $3.pos ),
+                                    crArgEtq( $$.aux )
+                                );
+
+                                // Si la condicion SI se cumple, actualizo valor
+                                emite(
+                                    EASIG,
+                                    crArgEnt( 1 ),
+                                    crArgNul(),
+                                    crArgPos( $$.pos )
+                                );
+
+                                completaLans( $$.aux, crArgEtq( $$.aux ) );
+                            } else {
+                                $$.tipo = T_ERROR;
+                            }
+                        };
+
+additiveExpression: multiplicativeExpression {
+                        $$.tipo = $1.tipo;
+                        $$.pos  = $1.pos;
+                    } |
+                    additiveExpression additiveOperator
+                                                      multiplicativeExpression {
                         // Todas las variables deben declararse antes de ser
                         // utilizadas.
                         // Comprobar que el tipo es compatible.
-                        if ( $1 ) {
+                        if (
+                            tiposEquivalentes( $1.tipo, T_ENTERO ) &&
+                            tiposEquivalentes( $3.tipo, T_ENTERO )
+                        ) {
+                            $$.tipo = T_ENTERO;
+                            $$.pos = creaVarTemp();
+                            emite(
+                                $2,
+                                crArgPos( $1.pos ),
+                                crArgPos( $3.pos ),
+                                crArgPos( $$.pos )
+                            );
+                        } else {
+                            $$.tipo = T_ERROR;
+                        }
+                    };
+
+multiplicativeExpression:   unaryExpression {
+                              $$.tipo = $1.tipo;
+                              $$.pos  = $1.pos;
+                            } |
+                            multiplicativeExpression multiplicativeOperator
+                                                               unaryExpression {
+                                // Todas las variables deben declararse antes de
+                                // ser utilizadas.
+                                // Comprobar que el tipo es compatible.
+                                if (
+                                    tiposEquivalentes( $1.tipo, T_ENTERO ) &&
+                                    tiposEquivalentes( $3.tipo, T_ENTERO )
+                                ) {
+                                    $$.tipo = T_ENTERO;
+                                    $$.pos  = creaVarTemp();
+                                    emite(
+                                        $2,
+                                        crArgPos( $1.pos ),
+                                        crArgPos( $3.pos ),
+                                        crArgPos( $$.pos )
+                                    );
+                                } else {
+                                    $$.tipo = T_ERROR;
+                                }
+                            ;
+
+unaryExpression:    suffixedExpression {
+                        $$.tipo = $1.tipo;
+                        $$.pos  = $1.pos;
+                    } |
+                    unaryOperator unaryExpression {
+                        // Todas las variables deben declararse antes de ser
+                        // utilizadas.
+                        // Comprobar que el tipo es compatible.
+                        if ( $1 == NOT ) {
                             if ( tiposEquivalentes( $2.tipo, T_LOGICO ) ) {
                                 $$.tipo = T_LOGICO;
                                 $$.pos = creaVarTemp();
@@ -291,9 +462,9 @@ unaryExpression: suffixedExpression |
                                 $$.tipo = T_ERROR;
                             }
                         } else {
-                            if ( tiposEquivalentes( $2, T_ENTERO ) ) {
+                            if ( tiposEquivalentes( $2.tipo, T_ENTERO ) ) {
                                 $$.tipo = T_ENTERO;
-                                $$.pos = creaVarTemp();
+                                $$.pos  = creaVarTemp();
                                 if ( $1 == NOP ) {
                                     // +expresion: no haces nada.
                                     emite(
@@ -315,8 +486,8 @@ unaryExpression: suffixedExpression |
                                 $$.tipo = T_ERROR;
                             }
                         }
-                 } |
-                 incrementOperator ID_ {
+                    } |
+                    incrementOperator ID_ {
                         // Todas las variables deben declararse antes de ser
                         // utilizadas.
                         // Comprobar que el tipo es compatible.
@@ -339,7 +510,7 @@ unaryExpression: suffixedExpression |
                         } else {
                             $$.tipo = T_ERROR;
                         }
-                 };
+                    };
 
 suffixedExpression: ID_ SQBROP_ expression SQBRCL_ {
                         // Todas las variables deben declararse antes de ser
@@ -422,15 +593,15 @@ suffixedExpression: ID_ SQBROP_ expression SQBRCL_ {
                     TRUE_ { $$.tipo = T_LOGICO; } |
                     FALSE_ { $$.tipo = T_LOGICO; };
 
-logicalOperator:        AND_  | OR_;
-equalityOperator:       EQ_   | NEQ_;
-relationalOperator:     GT_   | LT_ | GEQ_ | LEQ_;
-additiveOperator:       ADD_  | SUB_;
-multiplicativeOperator: MUL_  | DIV_;
-unaryOperator:          ADD_ { $$ = NOP; } |
-                        SUB_ { $$ = ESIG; } |
+logicalOperator:        AND_ { $$ = 0; }      | OR_  { $$ = 1; } ; // Jarcode xd
+equalityOperator:       EQ_  { $$ = EIGUAL; } | NEQ_ { $$ = EDIST; };
+relationalOperator:     GT_  { $$ = EMENEQ; } | LT_  { $$ = EMAYEQ; }  |
+                        GEQ_ { $$ = EMEN; }   | LEQ_ { $$ = EMAY; };
+additiveOperator:       ADD_ { $$ = ESUM; }   | SUB_ { $$ = EDIF; };
+multiplicativeOperator: MUL_ { $$ = EMULT; }  | DIV_ { $$ = EDIVI; };
+unaryOperator:          ADD_ { $$ = NOP; }    | SUB_ { $$ = ESIG; } |
                         NOT_ { $$ = NOT; };
-incrementOperator:      INC_ { $$ = 1; } | DEC_ { $$ = -1; };
+incrementOperator:      INC_ { $$ = 1; }      | DEC_ { $$ = -1; };
 
 %%
 
