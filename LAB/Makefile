@@ -65,7 +65,8 @@ dolabtest:
 
 
 clean-tmp:
-	rm -f tmp/*
+	rm -rf tmp
+	mkdir tmp
 clean: clean-tmp clean-analizer
 
 
