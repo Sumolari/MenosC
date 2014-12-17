@@ -24,34 +24,34 @@ build: clean build-sintaxis build-lexico compile-analizer
 
 
 test:
-	./analizador ./tests/tests.1.c  | diff ./tests/tests.1.out -
-	./analizador ./tests/tests.2.c  | diff ./tests/tests.2.out -
-	./analizador ./tests/tests.3.c  | diff ./tests/tests.3.out -
-	./analizador ./tests/tests.4.c  | diff ./tests/tests.4.out -
-	./analizador ./tests/tests.5.c  | diff ./tests/tests.5.out -
-	./analizador ./tests/tests.6.c  | diff ./tests/tests.6.out -
-	./analizador ./tests/tests.7.c  | diff ./tests/tests.7.out -
-	./analizador ./tests/tests.8.c  | diff ./tests/tests.8.out -
-	./analizador ./tests/tests.9.c  | diff ./tests/tests.9.out -
-	./analizador ./tests/tests.10.c | diff ./tests/tests.10.out -
-	./analizador ./tests/tests.11.c | diff ./tests/tests.11.out -
-	./analizador ./tests/tests.12.c | diff ./tests/tests.12.out -
-	./analizador ./lab_tests/a00.c  | diff ./lab_tests/a00.out -
-	./analizador ./lab_tests/a01.c  | diff ./lab_tests/a01.out -
-	./analizador ./lab_tests/a02.c  | diff ./lab_tests/a02.out -
-	./analizador ./lab_tests/a03.c  | diff ./lab_tests/a03.out -
-	./analizador ./lab_tests/b00.c  | diff ./lab_tests/b00.out -
-	./analizador ./lab_tests/b01.c  | diff ./lab_tests/b01.out -
-	./analizador ./lab_tests/b02.c  | diff ./lab_tests/b02.out -
-	./analizador ./lab_tests/b03.c  | diff ./lab_tests/b03.out -
-	./analizador ./lab_tests/b04.c  | diff ./lab_tests/b04.out -
-	#./analizador ./lab_tests/c00.c  | diff ./lab_tests/c00.out -
-	#./analizador ./lab_tests/c01.c  | diff ./lab_tests/c01.out -
-	#./analizador ./lab_tests/c02.c  | diff ./lab_tests/c02.out -
-	#./analizador ./lab_tests/c03.c  | diff ./lab_tests/c03.out -
-	#./analizador ./lab_tests/c04.c  | diff ./lab_tests/c04.out -
-	#./analizador ./lab_tests/c05.c  | diff ./lab_tests/c05.out -
-	#./analizador ./lab_tests/c06.c  | diff ./lab_tests/c06.out -
+	./analizador ./tests/tests.1.c   ignorar | diff ./tests/tests.1.out -
+	./analizador ./tests/tests.2.c   ignorar | diff ./tests/tests.2.out -
+	./analizador ./tests/tests.3.c   ignorar | diff ./tests/tests.3.out -
+	./analizador ./tests/tests.4.c   ignorar | diff ./tests/tests.4.out -
+	./analizador ./tests/tests.5.c   ignorar | diff ./tests/tests.5.out -
+	./analizador ./tests/tests.6.c   ignorar | diff ./tests/tests.6.out -
+	./analizador ./tests/tests.7.c   ignorar | diff ./tests/tests.7.out -
+	./analizador ./tests/tests.8.c   ignorar | diff ./tests/tests.8.out -
+	./analizador ./tests/tests.9.c   ignorar | diff ./tests/tests.9.out -
+	./analizador ./tests/tests.10.c  ignorar | diff ./tests/tests.10.out -
+	./analizador ./tests/tests.11.c  ignorar | diff ./tests/tests.11.out -
+	./analizador ./tests/tests.12.c  ignorar | diff ./tests/tests.12.out -
+	./analizador ./lab_tests/a00.c   ignorar | diff ./lab_tests/a00.out -
+	./analizador ./lab_tests/a01.c   ignorar | diff ./lab_tests/a01.out -
+	./analizador ./lab_tests/a02.c   ignorar | diff ./lab_tests/a02.out -
+	./analizador ./lab_tests/a03.c   ignorar | diff ./lab_tests/a03.out -
+	./analizador ./lab_tests/b00.c   ignorar | diff ./lab_tests/b00.out -
+	./analizador ./lab_tests/b01.c   ignorar | diff ./lab_tests/b01.out -
+	./analizador ./lab_tests/b02.c   ignorar | diff ./lab_tests/b02.out -
+	./analizador ./lab_tests/b03.c   ignorar | diff ./lab_tests/b03.out -
+	./analizador ./lab_tests/b04.c   ignorar | diff ./lab_tests/b04.out -
+	#./analizador ./lab_tests/c00.c       c00 | diff ./lab_tests/c00.out -
+	#./analizador ./lab_tests/c01.c       c01 | diff ./lab_tests/c01.out -
+	#./analizador ./lab_tests/c02.c       c02 | diff ./lab_tests/c02.out -
+	#./analizador ./lab_tests/c03.c       c03 | diff ./lab_tests/c03.out -
+	#./analizador ./lab_tests/c04.c       c04 | diff ./lab_tests/c04.out -
+	#./analizador ./lab_tests/c05.c       c05 | diff ./lab_tests/c05.out -
+	#./analizador ./lab_tests/c06.c       c06 | diff ./lab_tests/c06.out -
 
 
 quicktest: clean build dotest
