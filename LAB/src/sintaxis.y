@@ -9,13 +9,44 @@
      * tipo dado.
      * @param  *nom          Nombre del símbolo a comprobar.
      * @param  tipo_esperado Tipo esperado para el símbolo.
+     * @param  onlyCheck     0 (por defecto) para que imprima y cuente los
+     *                       errores, 1 para que no imprima ni cuente errores.
+     * @return               1 si tienen el mismo tipo. 0 de lo contrario.
+     */
+    int comprobarTipoExtended( char *nom, int tipo_esperado, int onlyCheck );
+
+    /**
+     * Comprueba que un identificador válido se corresponde con un símbolo de un
+     * tipo dado. Imprime siempre mensaje de error.
+     * @param  *nom          Nombre del símbolo a comprobar.
+     * @param  tipo_esperado Tipo esperado para el símbolo.
      * @return               1 si tienen el mismo tipo. 0 de lo contrario.
      */
     int comprobarTipo( char *nom, int tipo_esperado );
 
     /**
+     * Comprueba que un identificador válido se corresponde con un símbolo de un
+     * tipo dado. No imprime nunca mensaje de error.
+     * @param  *nom          Nombre del símbolo a comprobar.
+     * @param  tipo_esperado Tipo esperado para el símbolo.
+     * @return               1 si tienen el mismo tipo. 0 de lo contrario.
+     */
+    int comprobarTipoSilent( char *nom, int tipo_esperado );
+
+    /**
      * Comprueba que ambos tipos son equivalantes, esto es, ambos son del mismo
      * tipo y NO son de tipo T_ERROR.
+     * @param  tipo_1 Uno de los tipos a comprobar.
+     * @param  tipo_2 Uno de los tipos a comprobar.
+     * @param  onlyCheck     0 (por defecto) para que imprima y cuente los
+     *                       errores, 1 para que no imprima ni cuente errores.
+     * @return        1 si tienen el mismo tipo. 0 de lo contrario.
+     */
+    int tiposEquivalentesExtended( int tipo_1, int tipo_2, int onlyCheck );
+
+    /**
+     * Comprueba que ambos tipos son equivalantes, esto es, ambos son del mismo
+     * tipo y NO son de tipo T_ERROR. Imprime siempre mensaje de error.
      * @param  tipo_1 Uno de los tipos a comprobar.
      * @param  tipo_2 Uno de los tipos a comprobar.
      * @return        1 si tienen el mismo tipo. 0 de lo contrario.
@@ -23,29 +54,41 @@
     int tiposEquivalentes( int tipo_1, int tipo_2 );
 
     /**
+     * Comprueba que ambos tipos son equivalantes, esto es, ambos son del mismo
+     * tipo y NO son de tipo T_ERROR. No imprime nunca mensaje de error.
+     * @param  tipo_1 Uno de los tipos a comprobar.
+     * @param  tipo_2 Uno de los tipos a comprobar.
+     * @return        1 si tienen el mismo tipo. 0 de lo contrario.
+     */
+    int tiposEquivalentesSilent( int tipo_1, int tipo_2 );
+
+    /**
      * Devuelve 1 si existe el símbolo en la tabla de símbolos ó 0 en caso
      * contrario.
      * @param  *nom Nombre del símbolo a comprobar.
      * @return      1 si el símbolo existe. 0 de lo contrario.
      */
-    int existeTDS(char *nom);
+    int existeTDS( char *nom );
 
-    typedef struct {
-        int tipo;
-        int pos;
-        int aux;
-    } tipoYPos;
 %}
 
 %union
 {
-    char *ident;        /* Nombre del identificador          */
-    int cent;           /* Valor de la cte numerica entera   */
-    int unType;         /* Tipo de operador unario           */
-    int tipo;           /* Tipo de la expresion              */
-    int isInc;          /* Cantidad a incrementar            */
-    int codOp;          /* Codigo de operacion a ejecutar    */
-    tipoYPos tipoYPos;  /* Tipo y posicion de una expresion  */
+    char *ident;   /* Nombre del identificador          */
+    int cent;      /* Valor de la cte numerica entera   */
+    int unType;    /* Tipo de operador unario           */
+    int tipo;      /* Tipo de la expresion              */
+    int isInc;     /* Cantidad a incrementar            */
+    int codOp;     /* Codigo de operacion a ejecutar    */
+    struct {
+        int tipo;
+        int pos;
+        int aux;
+        int ini;
+        int fin;
+        int lv;
+        int lf;
+    } tipoYPos;  /* Tipo y posicion de una expresion  */
 }
 
 %error-verbose
@@ -82,8 +125,9 @@
 %token <cent> FALSE_
 %token CMNT_
 
-%type <tipoYPos> simpleType
 %type <tipoYPos> expression
+%type <tipoYPos> optionalExpression
+%type <tipoYPos> iterationInstruction
 %type <tipoYPos> equalityExpression
 %type <tipoYPos> relationalExpression
 %type <tipoYPos> additiveExpression
@@ -95,6 +139,9 @@
 %type <codOp> multiplicativeOperator
 %type <codOp> equalityOperator
 %type <codOp> relationalOperator
+%type <cent> simpleType
+%type <cent> incrementOperator
+%type <cent> logicalOperator
 
 %%
 
@@ -153,7 +200,15 @@ assignmentInstruction: ID_ ASSIGN_ expression SEMICOLON_ {
                             // Todas las variables deben declararse antes de ser
                             // utilizadas.
                             // Comprobar que el tipo es compatible.
-                            comprobarTipo( $1, $3 );
+                            if ( comprobarTipo( $1, $3.tipo ) ) {
+                                SIMB s = obtenerTDS( $1 );
+                                emite(
+                                    EASIG,
+                                    crArgPos( $3.pos ),
+                                    crArgNul(),
+                                    crArgPos( s.desp )
+                                );
+                            }
                        } |
                        ID_ SQBROP_ expression SQBRCL_ ASSIGN_ expression
                                                                     SEMICOLON_ {
@@ -162,10 +217,10 @@ assignmentInstruction: ID_ ASSIGN_ expression SEMICOLON_ {
                             // Comprobar que el tipo es compatible.
                             if (
                                 comprobarTipo( $1, T_ARRAY ) &&
-                                tiposEquivalentes( $3, T_ENTERO )
+                                tiposEquivalentes( $3.tipo, T_ENTERO )
                             ) {
                                 SIMB s = obtenerTDS( $1 );
-                                tiposEquivalentes( $6, s.telem );
+                                tiposEquivalentes( $6.tipo, s.telem );
                             }
                        };
 
@@ -173,60 +228,129 @@ inputOutputInstruction: READ_ PAOP_ ID_ PACL_ SEMICOLON_ {
                             // Todas las variables deben declararse antes de ser
                             // utilizadas.
                             // Comprobar que el tipo es compatible.
-                            comprobarTipo( $3, T_ENTERO );
+                            if ( comprobarTipo( $3, T_ENTERO ) ) {
+                                SIMB s = obtenerTDS( $3 );
+                                emite(
+                                    EREAD,
+                                    crArgNul(),
+                                    crArgNul(),
+                                    crArgPos( s.desp )
+                                );
+                            }
                         } |
                         PRINT_ PAOP_ expression PACL_ SEMICOLON_ {
                             // Todas las variables deben declararse antes de ser
                             // utilizadas.
                             // Comprobar que el tipo es compatible.
-                            tiposEquivalentes( $3, T_ENTERO );
+                            if ( tiposEquivalentes( $3.tipo, T_ENTERO ) ) {
+                                emite(
+                                    EWRITE,
+                                    crArgNul(),
+                                    crArgNul(),
+                                    crArgPos( $3.pos )
+                                );
+                            }
                         };
 
-selectionInstruction: IF_ PAOP_ expression PACL_ instruction ELSE_ instruction {
+selectionInstruction:   IF_ PAOP_ expression PACL_ {
                             // Todas las variables deben declararse antes de ser
                             // utilizadas.
                             // Comprobar que el tipo es compatible.
-                            tiposEquivalentes( $3, T_LOGICO );
-                       };
-
-iterationInstruction: FOR_ PAOP_ optionalExpression SEMICOLON_ expression
-                               SEMICOLON_ optionalExpression PACL_ instruction {
-                            // Todas las variables deben declararse antes de ser
-                            // utilizadas.
-                            // Comprobar que el tipo es compatible.
-                            if ( tiposEquivalentes( $5.tipo, T_LOGICO ) ) {
-                                int ini = si;
-                                int lv = creaLans( si );
+                            if ( tiposEquivalentes( $3.tipo, T_LOGICO ) ) {
+                                $<tipoYPos>$.lf = creaLans( si );
                                 emite(
                                     EIGUAL,
-                                    crArgPos( $5 ),
-                                    crArgEnt( 1 ),
-                                    crArgEtq( lv )
+                                    crArgPos( $3.pos ),
+                                    crArgEnt( 0 ),
+                                    crArgEnt( $<tipoYPos>$.lf )
                                 );
-                                int lf = creaLans( si );
+                            }
+                        } instruction {
+                            // Todas las variables deben declararse antes de ser
+                            // utilizadas.
+                            // Comprobar que el tipo es compatible.
+                            if ( tiposEquivalentesSilent( $3.tipo, T_LOGICO ) )
+                            {
+                                $<tipoYPos>$.fin = creaLans( si );
                                 emite(
                                     GOTOS,
                                     crArgNul(),
                                     crArgNul(),
-                                    crArgEtq( lf )
+                                    crArgEnt( $<tipoYPos>$.fin )
                                 );
-                                int aux = si;
-                                emite(
-                                    GOTOS,
-                                    crArgNul(),
-                                    crArgNul(),
-                                    crArgEnt( ini )
-                                );
-                                completaLans( lv, crArgEtq( lv ) );
-                                emite(
-                                    GOTOS,
-                                    crArgNul(),
-                                    crArgNul(),
-                                    crArgEnt( aux )
-                                );
-                                completaLans( lf, crArgEtq( lf ) );
+                                completaLans( $<tipoYPos>5.lf,
+                                                  crArgEtq( $<tipoYPos>5.lf ) );
+                            }
+                        } ELSE_ instruction {
+                            // Todas las variables deben declararse antes de ser
+                            // utilizadas.
+                            // Comprobar que el tipo es compatible.
+                            if ( tiposEquivalentesSilent( $3.tipo, T_LOGICO ) )
+                            {
+                                completaLans( $<tipoYPos>7.fin,
+                                                 crArgEtq( $<tipoYPos>7.fin ) );
                             }
                        };
+
+iterationInstruction:   FOR_ PAOP_ optionalExpression SEMICOLON_ {
+                            $<tipoYPos>$.ini = si;
+                        } expression SEMICOLON_ {
+                            // Todas las variables deben declararse antes de ser
+                            // utilizadas.
+                            // Comprobar que el tipo es compatible.
+                            if ( tiposEquivalentes( $6.tipo, T_LOGICO ) ) {
+                                $<tipoYPos>$.lv = creaLans( si );
+                                emite(
+                                    EIGUAL,
+                                    crArgPos( $6.pos ),
+                                    crArgEnt( 1 ),
+                                    crArgEtq( $<tipoYPos>5.lv )
+                                );
+                                $<tipoYPos>$.lf = creaLans( si );
+                                emite(
+                                    GOTOS,
+                                    crArgNul(),
+                                    crArgNul(),
+                                    crArgEtq( $<tipoYPos>5.lf )
+                                );
+                                $<tipoYPos>$.aux = si;
+                                $<tipoYPos>$.ini = $<tipoYPos>5.ini;
+                            }
+                        } optionalExpression PACL_ {
+                            // Todas las variables deben declararse antes de ser
+                            // utilizadas.
+                            // Comprobar que el tipo es compatible.
+                            if ( tiposEquivalentesSilent( $6.tipo, T_LOGICO ) )
+                            {
+                                emite(
+                                    GOTOS,
+                                    crArgNul(),
+                                    crArgNul(),
+                                    crArgEnt( $<tipoYPos>8.ini )
+                                );
+                                completaLans( $<tipoYPos>8.lv,
+                                                  crArgEtq( $<tipoYPos>8.lv ) );
+                                $<tipoYPos>$.ini = $<tipoYPos>8.ini;
+                                $<tipoYPos>$.aux = $<tipoYPos>8.aux;
+                                $<tipoYPos>$.lv  = $<tipoYPos>8.lv;
+                                $<tipoYPos>$.lf  = $<tipoYPos>8.lf;
+                            }
+                        } instruction {
+                            // Todas las variables deben declararse antes de ser
+                            // utilizadas.
+                            // Comprobar que el tipo es compatible.
+                            if ( tiposEquivalentesSilent( $6.tipo, T_LOGICO ) )
+                            {
+                                emite(
+                                    GOTOS,
+                                    crArgNul(),
+                                    crArgNul(),
+                                    crArgEnt(  $<tipoYPos>11.aux )
+                                );
+                                completaLans( $<tipoYPos>11.lf,
+                                                 crArgEtq( $<tipoYPos>11.lf ) );
+                            }
+                        };
 
 optionalExpression: | expression {
                         $$.tipo = $1.tipo;
@@ -239,7 +363,7 @@ optionalExpression: | expression {
                             SIMB id = obtenerTDS( $1 );
                             emite(
                                 EASIG,
-                                crArgPos( $3 ),
+                                crArgPos( $3.pos ),
                                 crArgNul(),
                                 crArgPos( id.desp )
                             );
@@ -437,7 +561,7 @@ multiplicativeExpression:   unaryExpression {
                                 } else {
                                     $$.tipo = T_ERROR;
                                 }
-                            ;
+                            };
 
 unaryExpression:    suffixedExpression {
                         $$.tipo = $1.tipo;
@@ -526,7 +650,7 @@ suffixedExpression: ID_ SQBROP_ expression SQBRCL_ {
                             emite(
                                 EAV,
                                 crArgPos( id.desp ),
-                                crArgPos( expresion.pos ),
+                                crArgPos( $3.pos ),
                                 crArgPos( $$.pos )
                             );
                         } else {
@@ -561,7 +685,7 @@ suffixedExpression: ID_ SQBROP_ expression SQBRCL_ {
                         // utilizadas.
                         // Comprobar que el tipo es compatible.
                         if ( comprobarTipo( $1, T_ENTERO ) ) {
-                            SIMB id = obtenerTDS ( ID_ );
+                            SIMB id = obtenerTDS ( $1 );
                             $$.tipo = T_ENTERO;
                             $$.pos = creaVarTemp();
                             emite(
@@ -605,12 +729,23 @@ incrementOperator:      INC_ { $$ = 1; }      | DEC_ { $$ = -1; };
 
 %%
 
+/*****************************************************************************/
 int tiposEquivalentes( int tipo_1, int tipo_2 ) {
+    tiposEquivalentesExtended( tipo_1, tipo_2, 0 );
+}
+
+int tiposEquivalentesSilent( int tipo_1, int tipo_2 ) {
+    tiposEquivalentesExtended( tipo_1, tipo_2, 1 );
+}
+
+int tiposEquivalentesExtended( int tipo_1, int tipo_2, int onlyCheck ) {
     if ( tipo_1 == T_ERROR || tipo_2 == T_ERROR ) {
         return 0;
     } if ( tipo_1 == tipo_2 ) {
         return 1;
     } else {
+        if ( onlyCheck ) return 0;
+
         if ( verbosidad == TRUE ) {
             printf(
                 "Tipo incompatible: se esperaba %d pero se ha encontrado %d\n",
@@ -623,14 +758,23 @@ int tiposEquivalentes( int tipo_1, int tipo_2 ) {
     }
 }
 /*****************************************************************************/
-int existeTDS(char *nom) {
+int existeTDS( char *nom ) {
     SIMB s = obtenerTDS(nom);
     return s.tipo != T_ERROR;
 }
 /*****************************************************************************/
 int comprobarTipo( char *nom, int tipo_esperado ) {
+    comprobarTipoExtended( nom, tipo_esperado, 0 );
+}
+
+int comprobarTipoSilent( char *nom, int tipo_esperado ) {
+    comprobarTipoExtended( nom, tipo_esperado, 1 );
+}
+
+int comprobarTipoExtended( char *nom, int tipo_esperado, int onlyCheck ) {
 
     if ( !existeTDS( nom ) ) {
+        if ( onlyCheck ) return 0;
         yyerror( "Variable no declarada" );
         return 0;
     }
@@ -642,6 +786,8 @@ int comprobarTipo( char *nom, int tipo_esperado ) {
 
     // Comprobar que el tipo es compatible.
     if ( obtenerTDS( nom ).tipo != tipo_esperado ) {
+        if ( onlyCheck ) return 0;
+
         if ( verbosidad == TRUE ) {
             printf(
                 "Tipo incompatible: se esperaba %d pero %s es %d\n",

@@ -91,11 +91,11 @@ closingBracket \]
 {lessThanRelationalOperator}        { return LT_; }
 {moreThanOrEqualRelationalOperator} { return GEQ_; }
 {lessThanOrEqualRelationalOperator} { return LEQ_; }
-{additiveOperator}                  { yylval.isNot = 0; return ADD_; }
-{substractiveOperator}              { yylval.isNot = 0; return SUB_; }
+{additiveOperator}                  { return ADD_; }
+{substractiveOperator}              { return SUB_; }
 {multiplicativeOperator}            { return MUL_; }
 {divisiveOperator}                  { return DIV_; }
-{negationUnaryOperator}             { yylval.isNot = 1; return NOT_; }
+{negationUnaryOperator}             { return NOT_; }
 {incrementOperator}                 { return INC_; }
 {decrementOperator}                 { return DEC_; }
 
