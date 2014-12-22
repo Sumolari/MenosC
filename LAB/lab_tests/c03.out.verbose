@@ -1,0 +1,51 @@
+// for loop
+// for init
+0 	EASIG 	i: 0 	, 		, p: 2
+1 	EASIG 	p: 2 	, 		, p: 1
+// for condition
+2 	EASIG 	p: 1 	, 		, p: 3
+3 	EASIG 	i: 10 	, 		, p: 4
+4 	EASIG 	i: 1 	,	 	, p: 5
+5 	EMEN 	p: 3 	, p: 4	, e: 6
+6 	EASIG 	i: 0 	, 		, p: 5
+7 	EIGUAL	p: 5 	, i: 1 	, e: 13	// goto main loop
+8 	GOTOS		 	, 	 	, e: 17	// goto endfor
+// for update
+9	EASIG 	p: 1 	, 		, p: 6
+10	ESUM	p: 6 	, i: 1	, p: 1
+11	EASIG 	p: 1 	, 		, p: 6
+12 	GOTOS		 	, 	 	, e: 2	// goto for condition
+
+// for main loop
+13 	EASIG 	p: 1 	, 		, p: 7
+14 	EASIG 	p: 1 	, 		, p: 8
+15 	EVA 	p: 0	, p: 7	, p: 8
+// end for main loop (goto update)
+16	GOTOS		 	, 	 	, e: 9
+// endfor
+// for loop
+// for init
+17 	EASIG 	i: 9 	, 		, p: 9
+18 	EASIG 	p: 9 	, 		, p: 1
+// for condition
+19 	EASIG 	p: 1 	, 		, p: 10
+20 	EASIG 	i: 0 	, 		, p: 11
+21 	EASIG 	i: 1 	,	 	, p: 12
+22 	EMAYEQ 	p: 10 	, p: 11	, e: 24
+23 	EASIG 	i: 0 	, 		, p: 12
+24 	EIGUAL	p: 12 	, i: 1 	, e: 30	// goto main loop
+25 	GOTOS		 	, 	 	, e: 34	// goto endfor
+// for update
+26	EASIG 	p: 1 	, 		, p: 13
+27	EDIF	p: 13 	, i: 1	, p: 1
+28	EASIG 	p: 1 	, 		, p: 13
+29 	GOTOS		 	, 	 	, e: 19	// goto for condition
+
+// for main loop
+30 	EASIG 	p: 1 	, 		, p: 14
+31 	EAV 	p: 0	, p: 14	, p: 15
+32 	EWRITE 			, 		, p: 15
+// end for main loop (goto update)
+33	GOTOS		 	, 	 	, e: 26
+// endfor
+34 	FIN 			, 		,
