@@ -48,12 +48,12 @@ test:
 	./analizador ./lab_tests/b03.c   ignorar | diff ./lab_tests/b03.out  -
 	./analizador ./lab_tests/b04.c   ignorar | diff ./lab_tests/b04.out  -
 	./analizador ./lab_tests/c00.c       tmp ; diff ./lab_tests/c00.out tmp.c3d
-	#./analizador ./lab_tests/c01.c       c01 ; diff ./lab_tests/c01.out -
-	#./analizador ./lab_tests/c02.c       c02 ; diff ./lab_tests/c02.out -
-	#./analizador ./lab_tests/c03.c       c03 ; diff ./lab_tests/c03.out -
-	#./analizador ./lab_tests/c04.c       c04 ; diff ./lab_tests/c04.out -
-	#./analizador ./lab_tests/c05.c       c05 ; diff ./lab_tests/c05.out -
-	#./analizador ./lab_tests/c06.c       c06 ; diff ./lab_tests/c06.out -
+	#./analizador ./lab_tests/c01.c       tmp ; diff ./lab_tests/c01.out tmp.c3d
+	./analizador ./lab_tests/c02.c       tmp ; diff ./lab_tests/c02.out tmp.c3d
+	#./analizador ./lab_tests/c03.c       tmp ; diff ./lab_tests/c03.out tmp.c3d
+	#./analizador ./lab_tests/c04.c       tmp ; diff ./lab_tests/c04.out tmp.c3d
+	#./analizador ./lab_tests/c05.c       tmp ; diff ./lab_tests/c05.out tmp.c3d
+	#./analizador ./lab_tests/c06.c       tmp ; diff ./lab_tests/c06.out tmp.c3d
 
 
 quicktest: clean build dotest
