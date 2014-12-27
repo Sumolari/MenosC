@@ -711,7 +711,7 @@ suffixedExpression: ID_ SQBROP_ expression SQBRCL_ {
                         $$.pos = creaVarTemp();
                         emite(
                             EASIG,
-                            crArgEnt( CTE_ ),
+                            crArgEnt( $1 ),
                             crArgNul(),
                             crArgPos( $$.pos )
                         );
