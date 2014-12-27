@@ -280,8 +280,7 @@ selectionInstruction:   IF_ PAOP_ expression PACL_ {
                                     crArgNul(),
                                     crArgEnt( $<tipoYPos>$.fin )
                                 );
-                                completaLans( $<tipoYPos>5.lf,
-                                                  crArgEtq( $<tipoYPos>5.lf ) );
+                                completaLans( $<tipoYPos>5.lf, crArgEtq( si ) );
                             }
                         } ELSE_ instruction {
                             // Todas las variables deben declararse antes de ser
@@ -289,8 +288,7 @@ selectionInstruction:   IF_ PAOP_ expression PACL_ {
                             // Comprobar que el tipo es compatible.
                             if ( tiposEquivalentesSilent( $3.tipo, T_LOGICO ) )
                             {
-                                completaLans( $<tipoYPos>7.fin,
-                                                 crArgEtq( $<tipoYPos>7.fin ) );
+                                completaLans( $<tipoYPos>7.fin, crArgEtq( si) );
                             }
                        };
 
@@ -306,14 +304,14 @@ iterationInstruction:   FOR_ PAOP_ optionalExpression SEMICOLON_ {
                                     EIGUAL,
                                     crArgPos( $6.pos ),
                                     crArgEnt( 1 ),
-                                    crArgEtq( $<tipoYPos>5.lv )
+                                    crArgEtq( $<tipoYPos>$.lv )
                                 );
                                 $<tipoYPos>$.lf = creaLans( si );
                                 emite(
                                     GOTOS,
                                     crArgNul(),
                                     crArgNul(),
-                                    crArgEtq( $<tipoYPos>5.lf )
+                                    crArgEtq( $<tipoYPos>$.lf )
                                 );
                                 $<tipoYPos>$.aux = si;
                                 $<tipoYPos>$.ini = $<tipoYPos>5.ini;
@@ -330,8 +328,7 @@ iterationInstruction:   FOR_ PAOP_ optionalExpression SEMICOLON_ {
                                     crArgNul(),
                                     crArgEnt( $<tipoYPos>8.ini )
                                 );
-                                completaLans( $<tipoYPos>8.lv,
-                                                  crArgEtq( $<tipoYPos>8.lv ) );
+                                completaLans( $<tipoYPos>8.lv, crArgEtq( si ) );
                                 $<tipoYPos>$.ini = $<tipoYPos>8.ini;
                                 $<tipoYPos>$.aux = $<tipoYPos>8.aux;
                                 $<tipoYPos>$.lv  = $<tipoYPos>8.lv;
@@ -349,8 +346,7 @@ iterationInstruction:   FOR_ PAOP_ optionalExpression SEMICOLON_ {
                                     crArgNul(),
                                     crArgEnt(  $<tipoYPos>11.aux )
                                 );
-                                completaLans( $<tipoYPos>11.lf,
-                                                 crArgEtq( $<tipoYPos>11.lf ) );
+                                completaLans( $<tipoYPos>11.lf, crArgEtq( si) );
                             }
                         };
 
@@ -416,7 +412,7 @@ expression: equalityExpression {
                         crArgPos( $$.pos )
                     );
 
-                    completaLans( $$.aux, crArgEtq( $$.aux ) );
+                    completaLans( $$.aux, crArgEtq( si ) );
                 } else {
                     $$.tipo = T_ERROR;
                 }
@@ -459,7 +455,7 @@ equalityExpression: relationalExpression {
                                 crArgPos( $$.pos )
                             );
 
-                            completaLans( $$.aux, crArgEtq( $$.aux ) );
+                            completaLans( $$.aux, crArgEtq( si ) );
 
                         } else {
                             $$.tipo = T_ERROR;
@@ -507,7 +503,7 @@ relationalExpression:   additiveExpression {
                                     crArgPos( $$.pos )
                                 );
 
-                                completaLans( $$.aux, crArgEtq( $$.aux ) );
+                                completaLans( $$.aux, crArgEtq( si ) );
                             } else {
                                 $$.tipo = T_ERROR;
                             }

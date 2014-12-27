@@ -38,6 +38,8 @@ test:
 	./analizador ./tests/tests.12.c  ignorar | diff ./tests/tests.12.out -
 	./analizador ./tests/tests.13.c  ignorar | diff ./tests/tests.13.out -
 	./analizador ./tests/tests.14.c      tmp ; diff ./tests/tests.14.out tmp.c3d
+	./analizador ./tests/tests.15.c      tmp ; diff ./tests/tests.15.out tmp.c3d
+	./analizador ./tests/tests.16.c      tmp ; diff ./tests/tests.16.out tmp.c3d
 	./analizador ./lab_tests/a00.c   ignorar | diff ./lab_tests/a00.out  -
 	./analizador ./lab_tests/a01.c   ignorar | diff ./lab_tests/a01.out  -
 	./analizador ./lab_tests/a02.c   ignorar | diff ./lab_tests/a02.out  -
