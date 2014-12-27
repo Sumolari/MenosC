@@ -389,7 +389,6 @@ expression: equalityExpression {
                 ) {
                     $$.tipo = T_LOGICO;
                     $$.pos  = creaVarTemp();
-                    $$.aux  = creaLans( si );
 
                     emite(
                         EASIG,
@@ -398,19 +397,25 @@ expression: equalityExpression {
                         crArgPos( $$.pos )
                     );
 
+                    int aux_1 = creaLans( si );
+
                     emite(
                         EIGUAL,
                         crArgPos( $1.pos ),
                         crArgEnt( $2 ),
-                        crArgEtq( $$.aux )
+                        crArgEtq( aux_1 )
                     );
+
+                    int aux_2 = creaLans( si );
 
                     emite(
                         EIGUAL,
                         crArgPos( $3.pos ),
                         crArgEnt( $2 ),
-                        crArgEtq( $$.aux )
+                        crArgEtq( aux_2 )
                     );
+
+                    $$.aux  = fusionaLans( aux_1, aux_2 );
 
                     emite(
                         EASIG,
@@ -719,8 +724,26 @@ suffixedExpression: ID_ SQBROP_ expression SQBRCL_ {
                             crArgPos( $$.pos )
                         );
                     } |
-                    TRUE_ { $$.tipo = T_LOGICO; } |
-                    FALSE_ { $$.tipo = T_LOGICO; };
+                    TRUE_ {
+                        $$.tipo = T_LOGICO;
+                        $$.pos = creaVarTemp();
+                        emite(
+                            EASIG,
+                            crArgEnt( 1 ),
+                            crArgNul(),
+                            crArgPos( $$.pos )
+                        );
+                    } |
+                    FALSE_ {
+                        $$.tipo = T_LOGICO;
+                        $$.pos = creaVarTemp();
+                        emite(
+                            EASIG,
+                            crArgEnt( 0 ),
+                            crArgNul(),
+                            crArgPos( $$.pos )
+                        );
+                    };
 
 logicalOperator:        AND_ { $$ = 0; }      | OR_  { $$ = 1; } ; // Jarcode xd
 equalityOperator:       EQ_  { $$ = EIGUAL; } | NEQ_ { $$ = EDIST; };

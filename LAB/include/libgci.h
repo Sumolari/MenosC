@@ -60,7 +60,12 @@ TIPO_ARG crArgPos (int valor) ;
 /******************************** Funciones para la manipulacion de las LANS */
 int creaLans (int d);
 /* Crea una lista de argumentos no satisfechos para una instruccion
-   incompleta cuya direccion es "d" y devuelve su referencia.                */
+   incompleta cuya direccion es "d" y devuelve su referencia.
+
+   Nota de Lluis: Por lo visto esto fuerza a que el ultimo parametro de la
+                  siguiente funcion sea una etiqueta a la referencia creada,
+                  independientemente de lo que se ponga como 3r atributo en la
+                  siguiente instruccion.                                     */
 int fusionaLans (int x, int y);
 /* Fusiona dos listas de argumentos no satisfechos cuyas referencias
    son "x" e "y" y devuelve la referencia de la lista fusionada.             */
