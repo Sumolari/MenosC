@@ -222,7 +222,14 @@ assignmentInstruction: ID_ ASSIGN_ expression SEMICOLON_ {
                                 tiposEquivalentes( $3.tipo, T_ENTERO )
                             ) {
                                 SIMB s = obtenerTDS( $1 );
-                                tiposEquivalentes( $6.tipo, s.telem );
+                                if ( tiposEquivalentes( $6.tipo, s.telem ) ) {
+                                    emite(
+                                        EVA,
+                                        crArgPos( s.desp ),
+                                        crArgPos( $3.pos ),
+                                        crArgPos( $6.pos )
+                                    );
+                                }
                             }
                        };
 
@@ -644,7 +651,7 @@ suffixedExpression: ID_ SQBROP_ expression SQBRCL_ {
                         ) {
                             SIMB id = obtenerTDS( $1 );
                             $$.tipo = id.telem;
-                            $$.pos = creaVarTemp();
+                            $$.pos  = creaVarTemp();
                             emite(
                                 EAV,
                                 crArgPos( id.desp ),
