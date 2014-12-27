@@ -145,7 +145,9 @@
 
 %%
 
-program: BROP_ statementsSequence BRCL_;
+program: BROP_ statementsSequence BRCL_ {
+            emite( FIN, crArgNul(), crArgNul(), crArgNul() );
+        };
 
 statementsSequence: statement | statementsSequence statement;
 
