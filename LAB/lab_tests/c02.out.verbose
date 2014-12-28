@@ -1,23 +1,23 @@
 // init
-  0 EASIG     i:   4  ,          ,  p:   1
-  1 EASIG     p:   1  ,          ,  p:   0
+  0 EASIG     i:   4  ,          ,  p:   1  
+  1 EASIG     p:   1  ,          ,  p:   0  
 // aux = x + 1	{++x}
-  2 ESUM      p:   0  ,  i:   1  ,  p:   0
-  3 EASIG     p:   0  ,          ,  p:   2
+  2 ESUM      p:   0  ,  i:   1  ,  p:   0  
+  3 EASIG     p:   0  ,          ,  p:   2  
 // print(aux)
-  4 EWRITE            ,          ,  p:   2
+  4 EWRITE            ,          ,  p:   2  
 // print(x)
-  5 EASIG     p:   0  ,          ,  p:   3
-  6 EWRITE            ,          ,  p:   3
+  5 EASIG     p:   0  ,          ,  p:   3  
+  6 EWRITE            ,          ,  p:   3  
 // x = 4
-  7 EASIG     i:   4  ,          ,  p:   4
-  8 EASIG     p:   4  ,          ,  p:   0
+  7 EASIG     i:   4  ,          ,  p:   4  
+  8 EASIG     p:   4  ,          ,  p:   0  
 // aux = x		{x++}
-  9 EASIG     p:   0  ,          ,  p:   5
- 10 ESUM      p:   0  ,  i:   1  ,  p:   0
+  9 EASIG     p:   0  ,          ,  p:   5  
+ 10 ESUM      p:   0  ,  i:   1  ,  p:   0  
 // print(aux)
- 11 EWRITE            ,          ,  p:   5
+ 11 EWRITE            ,          ,  p:   5  
 // print(x)
- 12 EASIG     p:   0  ,          ,  p:   6
- 13 EWRITE            ,          ,  p:   6
- 14 FIN               ,          ,
+ 12 EASIG     p:   0  ,          ,  p:   6  
+ 13 EWRITE            ,          ,  p:   6  
+ 14 FIN               ,          ,          
