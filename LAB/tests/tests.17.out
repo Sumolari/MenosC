@@ -30,9 +30,9 @@
  29 EASIG     p:  22  ,          ,  p:  16  
  30 EASIG     p:  16  ,          ,  p:  23  
  31 EASIG     i:   3  ,          ,  p:  24  
- 32 EASIG     i:   0  ,          ,  p:  25  
- 33 EMAYEQ    p:  23  ,  p:  24  ,  e:  35  
- 34 EASIG     i:   1  ,          ,  p:  25  
+ 32 EASIG     i:   1  ,          ,  p:  25  
+ 33 EMEN      p:  23  ,  p:  24  ,  e:  35  
+ 34 EASIG     i:   0  ,          ,  p:  25  
  35 EIGUAL    p:  25  ,  i:   1  ,  e:  40  
  36 GOTOS             ,          ,  e:  44  
  37 EASIG     p:  16  ,          ,  p:  26  

@@ -88,9 +88,9 @@
  87 EASIG     i:   0  ,          ,  p:  41  
  88 EASIG     p:   0  ,          ,  p:  42  
  89 EASIG     i:   0  ,          ,  p:  43  
- 90 EASIG     i:   0  ,          ,  p:  44  
- 91 EMENEQ    p:  42  ,  p:  43  ,  e:  93  
- 92 EASIG     i:   1  ,          ,  p:  44  
+ 90 EASIG     i:   1  ,          ,  p:  44  
+ 91 EMAY      p:  42  ,  p:  43  ,  e:  93  
+ 92 EASIG     i:   0  ,          ,  p:  44  
  93 EASIG     i:   0  ,          ,  p:  45  
  94 EIGUAL    p:  41  ,  i:   0  ,  e:  97  
  95 EIGUAL    p:  44  ,  i:   0  ,  e:  97  
