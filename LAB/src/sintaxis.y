@@ -492,14 +492,14 @@ relationalExpression:   additiveExpression {
 
                                 emite(
                                     EASIG,
-                                    crArgEnt( 0 ),
+                                    crArgEnt( 1 ),
                                     crArgNul(),
                                     crArgPos( $$.pos )
                                 );
 
                                 $$.aux = creaLans( si );
 
-                                // Si la condicion no se cumple, salto despues.
+                                // Si la condicion se cumple, salto despues.
                                 emite(
                                     $2,
                                     crArgPos( $1.pos ),
@@ -507,10 +507,10 @@ relationalExpression:   additiveExpression {
                                     crArgEtq( $$.aux )
                                 );
 
-                                // Si la condicion SI se cumple, actualizo valor
+                                // Si la condicion NO se cumple, actualizo valor
                                 emite(
                                     EASIG,
-                                    crArgEnt( 1 ),
+                                    crArgEnt( 0 ),
                                     crArgNul(),
                                     crArgPos( $$.pos )
                                 );
@@ -747,8 +747,8 @@ suffixedExpression: ID_ SQBROP_ expression SQBRCL_ {
 
 logicalOperator:        AND_ { $$ = 0; }      | OR_  { $$ = 1; } ; // Jarcode xd
 equalityOperator:       EQ_  { $$ = EIGUAL; } | NEQ_ { $$ = EDIST; };
-relationalOperator:     GT_  { $$ = EMENEQ; } | LT_  { $$ = EMAYEQ; }  |
-                        GEQ_ { $$ = EMEN; }   | LEQ_ { $$ = EMAY; };
+relationalOperator:     GT_  { $$ = EMAY; } | LT_  { $$ = EMEN; }  |
+                        GEQ_ { $$ = EMAYEQ; }   | LEQ_ { $$ = EMENEQ; };
 additiveOperator:       ADD_ { $$ = ESUM; }   | SUB_ { $$ = EDIF; };
 multiplicativeOperator: MUL_ { $$ = EMULT; }  | DIV_ { $$ = EDIVI; };
 unaryOperator:          ADD_ { $$ = NOP; }    | SUB_ { $$ = ESIG; } |
