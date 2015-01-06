@@ -2,9 +2,9 @@
   1 EASIG     p:  11  ,          ,  p:  10  
   2 EASIG     p:  10  ,          ,  p:  12  
   3 EASIG     i:  10  ,          ,  p:  13  
-  4 EASIG     i:   0  ,          ,  p:  14  
-  5 EMAYEQ    p:  12  ,  p:  13  ,  e:   7  
-  6 EASIG     i:   1  ,          ,  p:  14  
+  4 EASIG     i:   1  ,          ,  p:  14  
+  5 EMEN      p:  12  ,  p:  13  ,  e:   7  
+  6 EASIG     i:   0  ,          ,  p:  14  
   7 EIGUAL    p:  14  ,  i:   1  ,  e:  12  
   8 GOTOS             ,          ,  e:  16  
   9 EASIG     p:  10  ,          ,  p:  15  
@@ -18,9 +18,9 @@
  17 EASIG     p:  18  ,          ,  p:  10  
  18 EASIG     p:  10  ,          ,  p:  19  
  19 EASIG     i:   0  ,          ,  p:  20  
- 20 EASIG     i:   0  ,          ,  p:  21  
- 21 EMEN      p:  19  ,  p:  20  ,  e:  23  
- 22 EASIG     i:   1  ,          ,  p:  21  
+ 20 EASIG     i:   1  ,          ,  p:  21  
+ 21 EMAYEQ    p:  19  ,  p:  20  ,  e:  23  
+ 22 EASIG     i:   0  ,          ,  p:  21  
  23 EIGUAL    p:  21  ,  i:   1  ,  e:  28  
  24 GOTOS             ,          ,  e:  32  
  25 EASIG     p:  10  ,          ,  p:  22  

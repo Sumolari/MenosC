@@ -35,9 +35,9 @@
  34 EASIG     i:   0  ,          ,  p:  18  
  35 EASIG     p:   0  ,          ,  p:  19  
  36 EASIG     i:   0  ,          ,  p:  20  
- 37 EASIG     i:   0  ,          ,  p:  21  
- 38 EMENEQ    p:  19  ,  p:  20  ,  e:  40  
- 39 EASIG     i:   1  ,          ,  p:  21  
+ 37 EASIG     i:   1  ,          ,  p:  21  
+ 38 EMAY      p:  19  ,  p:  20  ,  e:  40  
+ 39 EASIG     i:   0  ,          ,  p:  21  
  40 EASIG     i:   0  ,          ,  p:  22  
  41 EIGUAL    p:  18  ,  i:   0  ,  e:  44  
  42 EIGUAL    p:  21  ,  i:   0  ,  e:  44  
