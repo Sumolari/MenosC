@@ -1,13 +1,39 @@
 {
 	"folders": [ {
+		"name": "Tests",
+		"path": "LAB/tests"
+	}, {
+		"name": "Tests (LAB)",
+		"path": "LAB/lab_tests"
+	}, {
+		"name": "Bin",
+		"path": "LAB/bin"
+	}, {
+		"name": "Headers",
+		"path": "LAB/include"
+	}, {
+		"name": "Libraries",
+		"path": "LAB/lib"
+	}, {
+		"name": "Sources",
+		"path": "LAB/src"
+	}, {
 		"name": "Compilador",
-		"path": "LAB"
+		"path": "LAB",
+		"folder_exclude_patterns": [
+			"bison_ii_tests", "lab_tests", "tests", "tmp", "src", "lib",
+			"include", "bin"
+		],
+		"file_exclude_patterns": [ "*.tgz" ]
 	}, {
 		"name": "Vagrant",
 		"path": ".",
-		"folder_exclude_patterns": [ "LAB", ".vagrant" ]
+		"folder_exclude_patterns": [ "LAB", ".vagrant" ],
+		"file_exclude_patterns": [ "*.pdf" ]
 	}, {
 		"follow_symlinks": true,
 		"path": "."
-	} ]
+	} ],
+	"tab_size": 4,
+	"translate_tabs_to_spaces": true
 }

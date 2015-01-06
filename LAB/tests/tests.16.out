@@ -1,0 +1,17 @@
+  0 EASIG     i:  99  ,          ,  p:   1  
+  1 EASIG     p:   1  ,          ,  p:   0  
+  2 EASIG     p:   0  ,          ,  p:   3  
+  3 EASIG     i:   5  ,          ,  p:   4  
+  4 EASIG     i:   1  ,          ,  p:   5  
+  5 EMAY      p:   3  ,  p:   4  ,  e:   7  
+  6 EASIG     i:   0  ,          ,  p:   5  
+  7 EASIG     p:   5  ,          ,  p:   2  
+  8 EASIG     p:   2  ,          ,  p:   6  
+  9 EIGUAL    p:   6  ,  i:   0  ,  e:  13  
+ 10 EASIG     p:   0  ,          ,  p:   7  
+ 11 EWRITE            ,          ,  p:   7  
+ 12 GOTOS             ,          ,  e:  16  
+ 13 EASIG     i:   1  ,          ,  p:   8  
+ 14 ESIG      p:   8  ,          ,  p:   9  
+ 15 EWRITE            ,          ,  p:   9  
+ 16 FIN               ,          ,          

@@ -1,0 +1,21 @@
+// init
+  0 EREAD             ,          ,  p:   0  
+// t3 = a + a
+  1 EASIG     p:   0  ,          ,  p:   1  
+  2 EASIG     p:   0  ,          ,  p:   2  
+  3 ESUM      p:   1  ,  p:   2  ,  p:   3  
+// t5 = t3 * 2
+  4 EASIG     i:   2  ,          ,  p:   4  
+  5 EMULT     p:   3  ,  p:   4  ,  p:   5  
+// t7 = t5 / 2
+  6 EASIG     i:   2  ,          ,  p:   6  
+  7 EDIVI     p:   5  ,  p:   6  ,  p:   7  
+// t9 = t7 - a
+  8 EASIG     p:   0  ,          ,  p:   8  
+  9 EDIF      p:   7  ,  p:   8  ,  p:   9  
+// a = t9
+ 10 EASIG     p:   9  ,          ,  p:   0  
+// print(a)
+ 11 EASIG     p:   0  ,          ,  p:  10  
+ 12 EWRITE            ,          ,  p:  10  
+ 13 FIN               ,          ,          
