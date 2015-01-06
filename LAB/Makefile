@@ -15,6 +15,8 @@ sintaxis: clean build-sintaxis
 
 clean-analizer:
 	rm -f analizador
+	rm -f ignorar.c3d
+	rm -f tmp.c3d
 compile-analizer:
 	gcc -oanalizador src/principal.c tmp/lexico.c tmp/sintaxis.c \
 	                                        -L./lib -I./include -lfl -ltds -lgci
