@@ -1,14 +1,15 @@
-0 	EASIG 	i: 4 	, 		, p: 1
-1 	EASIG 	p: 1 	, 		, p: 0
-2	EASIG 	p: 0 	, 		, p: 2
-3	ESUM	p: 2 	, i: 1	, p: 0
-4	EASIG 	p: 0 	, 		, p: 2
-5 	EWRITE 			,		, p: 2
-6	EASIG 	p: 0 	, 		, p: 4
-7 	EWRITE 			,		, p: 4
-8 	EASIG 	i: 4 	, 		, p: 5
-9 	EASIG 	p: 5 	, 		, p: 0
-10	EASIG 	p: 0 	, 		, p: 6
-11	ESUM	p: 6 	, i: 1	, p: 0
-12	EWRITE 			,		, p: 6
-13 	FIN 			, 		,
+  0 EASIG     i:   4  ,          ,  p:   1  
+  1 EASIG     p:   1  ,          ,  p:   0  
+  2 ESUM      p:   0  ,  i:   1  ,  p:   0  
+  3 EASIG     p:   0  ,          ,  p:   2  
+  4 EWRITE            ,          ,  p:   2  
+  5 EASIG     p:   0  ,          ,  p:   3  
+  6 EWRITE            ,          ,  p:   3  
+  7 EASIG     i:   4  ,          ,  p:   4  
+  8 EASIG     p:   4  ,          ,  p:   0  
+  9 EASIG     p:   0  ,          ,  p:   5  
+ 10 ESUM      p:   0  ,  i:   1  ,  p:   0  
+ 11 EWRITE            ,          ,  p:   5  
+ 12 EASIG     p:   0  ,          ,  p:   6  
+ 13 EWRITE            ,          ,  p:   6  
+ 14 FIN               ,          ,          

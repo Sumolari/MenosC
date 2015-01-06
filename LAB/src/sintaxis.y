@@ -145,7 +145,9 @@
 
 %%
 
-program: BROP_ statementsSequence BRCL_;
+program: BROP_ statementsSequence BRCL_ {
+            emite( FIN, crArgNul(), crArgNul(), crArgNul() );
+        };
 
 statementsSequence: statement | statementsSequence statement;
 
@@ -220,7 +222,14 @@ assignmentInstruction: ID_ ASSIGN_ expression SEMICOLON_ {
                                 tiposEquivalentes( $3.tipo, T_ENTERO )
                             ) {
                                 SIMB s = obtenerTDS( $1 );
-                                tiposEquivalentes( $6.tipo, s.telem );
+                                if ( tiposEquivalentes( $6.tipo, s.telem ) ) {
+                                    emite(
+                                        EVA,
+                                        crArgPos( s.desp ),
+                                        crArgPos( $3.pos ),
+                                        crArgPos( $6.pos )
+                                    );
+                                }
                             }
                        };
 
@@ -278,8 +287,7 @@ selectionInstruction:   IF_ PAOP_ expression PACL_ {
                                     crArgNul(),
                                     crArgEnt( $<tipoYPos>$.fin )
                                 );
-                                completaLans( $<tipoYPos>5.lf,
-                                                  crArgEtq( $<tipoYPos>5.lf ) );
+                                completaLans( $<tipoYPos>5.lf, crArgEtq( si ) );
                             }
                         } ELSE_ instruction {
                             // Todas las variables deben declararse antes de ser
@@ -287,8 +295,7 @@ selectionInstruction:   IF_ PAOP_ expression PACL_ {
                             // Comprobar que el tipo es compatible.
                             if ( tiposEquivalentesSilent( $3.tipo, T_LOGICO ) )
                             {
-                                completaLans( $<tipoYPos>7.fin,
-                                                 crArgEtq( $<tipoYPos>7.fin ) );
+                                completaLans( $<tipoYPos>7.fin, crArgEtq( si) );
                             }
                        };
 
@@ -304,14 +311,14 @@ iterationInstruction:   FOR_ PAOP_ optionalExpression SEMICOLON_ {
                                     EIGUAL,
                                     crArgPos( $6.pos ),
                                     crArgEnt( 1 ),
-                                    crArgEtq( $<tipoYPos>5.lv )
+                                    crArgEtq( $<tipoYPos>$.lv )
                                 );
                                 $<tipoYPos>$.lf = creaLans( si );
                                 emite(
                                     GOTOS,
                                     crArgNul(),
                                     crArgNul(),
-                                    crArgEtq( $<tipoYPos>5.lf )
+                                    crArgEtq( $<tipoYPos>$.lf )
                                 );
                                 $<tipoYPos>$.aux = si;
                                 $<tipoYPos>$.ini = $<tipoYPos>5.ini;
@@ -328,8 +335,7 @@ iterationInstruction:   FOR_ PAOP_ optionalExpression SEMICOLON_ {
                                     crArgNul(),
                                     crArgEnt( $<tipoYPos>8.ini )
                                 );
-                                completaLans( $<tipoYPos>8.lv,
-                                                  crArgEtq( $<tipoYPos>8.lv ) );
+                                completaLans( $<tipoYPos>8.lv, crArgEtq( si ) );
                                 $<tipoYPos>$.ini = $<tipoYPos>8.ini;
                                 $<tipoYPos>$.aux = $<tipoYPos>8.aux;
                                 $<tipoYPos>$.lv  = $<tipoYPos>8.lv;
@@ -347,8 +353,7 @@ iterationInstruction:   FOR_ PAOP_ optionalExpression SEMICOLON_ {
                                     crArgNul(),
                                     crArgEnt(  $<tipoYPos>11.aux )
                                 );
-                                completaLans( $<tipoYPos>11.lf,
-                                                 crArgEtq( $<tipoYPos>11.lf ) );
+                                completaLans( $<tipoYPos>11.lf, crArgEtq( si) );
                             }
                         };
 
@@ -384,7 +389,6 @@ expression: equalityExpression {
                 ) {
                     $$.tipo = T_LOGICO;
                     $$.pos  = creaVarTemp();
-                    $$.aux  = creaLans( si );
 
                     emite(
                         EASIG,
@@ -393,19 +397,25 @@ expression: equalityExpression {
                         crArgPos( $$.pos )
                     );
 
+                    int aux_1 = creaLans( si );
+
                     emite(
                         EIGUAL,
                         crArgPos( $1.pos ),
                         crArgEnt( $2 ),
-                        crArgEtq( $$.aux )
+                        crArgEtq( aux_1 )
                     );
+
+                    int aux_2 = creaLans( si );
 
                     emite(
                         EIGUAL,
                         crArgPos( $3.pos ),
                         crArgEnt( $2 ),
-                        crArgEtq( $$.aux )
+                        crArgEtq( aux_2 )
                     );
+
+                    $$.aux  = fusionaLans( aux_1, aux_2 );
 
                     emite(
                         EASIG,
@@ -414,7 +424,7 @@ expression: equalityExpression {
                         crArgPos( $$.pos )
                     );
 
-                    completaLans( $$.aux, crArgEtq( $$.aux ) );
+                    completaLans( $$.aux, crArgEtq( si ) );
                 } else {
                     $$.tipo = T_ERROR;
                 }
@@ -457,7 +467,7 @@ equalityExpression: relationalExpression {
                                 crArgPos( $$.pos )
                             );
 
-                            completaLans( $$.aux, crArgEtq( $$.aux ) );
+                            completaLans( $$.aux, crArgEtq( si ) );
 
                         } else {
                             $$.tipo = T_ERROR;
@@ -482,14 +492,14 @@ relationalExpression:   additiveExpression {
 
                                 emite(
                                     EASIG,
-                                    crArgEnt( 0 ),
+                                    crArgEnt( 1 ),
                                     crArgNul(),
                                     crArgPos( $$.pos )
                                 );
 
                                 $$.aux = creaLans( si );
 
-                                // Si la condicion no se cumple, salto despues.
+                                // Si la condicion se cumple, salto despues.
                                 emite(
                                     $2,
                                     crArgPos( $1.pos ),
@@ -497,15 +507,15 @@ relationalExpression:   additiveExpression {
                                     crArgEtq( $$.aux )
                                 );
 
-                                // Si la condicion SI se cumple, actualizo valor
+                                // Si la condicion NO se cumple, actualizo valor
                                 emite(
                                     EASIG,
-                                    crArgEnt( 1 ),
+                                    crArgEnt( 0 ),
                                     crArgNul(),
                                     crArgPos( $$.pos )
                                 );
 
-                                completaLans( $$.aux, crArgEtq( $$.aux ) );
+                                completaLans( $$.aux, crArgEtq( si ) );
                             } else {
                                 $$.tipo = T_ERROR;
                             }
@@ -646,7 +656,7 @@ suffixedExpression: ID_ SQBROP_ expression SQBRCL_ {
                         ) {
                             SIMB id = obtenerTDS( $1 );
                             $$.tipo = id.telem;
-                            $$.pos = creaVarTemp();
+                            $$.pos  = creaVarTemp();
                             emite(
                                 EAV,
                                 crArgPos( id.desp ),
@@ -709,18 +719,36 @@ suffixedExpression: ID_ SQBROP_ expression SQBRCL_ {
                         $$.pos = creaVarTemp();
                         emite(
                             EASIG,
-                            crArgEnt( CTE_ ),
+                            crArgEnt( $1 ),
                             crArgNul(),
                             crArgPos( $$.pos )
                         );
                     } |
-                    TRUE_ { $$.tipo = T_LOGICO; } |
-                    FALSE_ { $$.tipo = T_LOGICO; };
+                    TRUE_ {
+                        $$.tipo = T_LOGICO;
+                        $$.pos = creaVarTemp();
+                        emite(
+                            EASIG,
+                            crArgEnt( 1 ),
+                            crArgNul(),
+                            crArgPos( $$.pos )
+                        );
+                    } |
+                    FALSE_ {
+                        $$.tipo = T_LOGICO;
+                        $$.pos = creaVarTemp();
+                        emite(
+                            EASIG,
+                            crArgEnt( 0 ),
+                            crArgNul(),
+                            crArgPos( $$.pos )
+                        );
+                    };
 
 logicalOperator:        AND_ { $$ = 0; }      | OR_  { $$ = 1; } ; // Jarcode xd
 equalityOperator:       EQ_  { $$ = EIGUAL; } | NEQ_ { $$ = EDIST; };
-relationalOperator:     GT_  { $$ = EMENEQ; } | LT_  { $$ = EMAYEQ; }  |
-                        GEQ_ { $$ = EMEN; }   | LEQ_ { $$ = EMAY; };
+relationalOperator:     GT_  { $$ = EMAY; } | LT_  { $$ = EMEN; }  |
+                        GEQ_ { $$ = EMAYEQ; }   | LEQ_ { $$ = EMENEQ; };
 additiveOperator:       ADD_ { $$ = ESUM; }   | SUB_ { $$ = EDIF; };
 multiplicativeOperator: MUL_ { $$ = EMULT; }  | DIV_ { $$ = EDIVI; };
 unaryOperator:          ADD_ { $$ = NOP; }    | SUB_ { $$ = ESIG; } |

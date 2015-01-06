@@ -21,6 +21,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   config.vm.provision "shell",
-    inline: "sudo apt-get update && sudo apt-get -q -y install flex bison"
+    inline: "sudo apt-get update && sudo apt-get -q -y install flex bison lib32z1"
 
 end
