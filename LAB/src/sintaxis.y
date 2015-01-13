@@ -124,6 +124,9 @@
 %token <cent> TRUE_
 %token <cent> FALSE_
 %token CMNT_
+%token MOD_
+%token DO_
+%token WHILE_
 
 %type <tipoYPos> expression
 %type <tipoYPos> optionalExpression
@@ -299,7 +302,47 @@ selectionInstruction:   IF_ PAOP_ expression PACL_ {
                             }
                        };
 
-iterationInstruction:   FOR_ PAOP_ optionalExpression SEMICOLON_ {
+iterationInstruction:   WHILE_ PAOP_ {
+                            $<tipoYPos>$.ini = si;
+                        } expression PACL_ {
+                            // Todas las variables deben declararse antes de ser
+                            // utilizadas.
+                            // Comprobar que el tipo es compatible.
+                            if ( tiposEquivalentes( $4.tipo, T_LOGICO ) ) {
+                                $<tipoYPos>$.ini = $<tipoYPos>3.ini;
+                                $<tipoYPos>$.lf = creaLans( si );
+                                emite(
+                                    EDIST,
+                                    crArgPos( $4.pos ),
+                                    crArgEnt( 1 ),
+                                    crArgEtq( $<tipoYPos>$.lf )
+                                );
+                            }
+                        } instruction {
+                            emite(
+                                GOTOS,
+                                crArgNul(),
+                                crArgNul(),
+                                crArgEtq( $<tipoYPos>6.ini )
+                            );
+                            completaLans( $<tipoYPos>6.lf, crArgEtq( si ) );
+                        } |
+                        DO_ {
+                            $<tipoYPos>$.lv = si;
+                        } instruction WHILE_ PAOP_ expression PACL_ SEMICOLON_ {
+                            // Todas las variables deben declararse antes de ser
+                            // utilizadas.
+                            // Comprobar que el tipo es compatible.
+                            if ( tiposEquivalentes( $6.tipo, T_LOGICO ) ) {
+                                emite(
+                                    EIGUAL,
+                                    crArgPos( $6.pos ),
+                                    crArgEnt( 1 ),
+                                    crArgEtq( $<tipoYPos>2.lv )
+                                );
+                            }
+                        } |
+                        FOR_ PAOP_ optionalExpression SEMICOLON_ {
                             $<tipoYPos>$.ini = si;
                         } expression SEMICOLON_ {
                             // Todas las variables deben declararse antes de ser
@@ -551,6 +594,26 @@ multiplicativeExpression:   unaryExpression {
                               $$.tipo = $1.tipo;
                               $$.pos  = $1.pos;
                             } |
+                            multiplicativeExpression MOD_ unaryExpression {
+                                // Todas las variables deben declararse antes de
+                                // ser utilizadas.
+                                // Comprobar que el tipo es compatible.
+                                if (
+                                    tiposEquivalentes( $1.tipo, T_ENTERO ) &&
+                                    tiposEquivalentes( $3.tipo, T_ENTERO )
+                                ) {
+                                    $$.tipo = T_ENTERO;
+                                    $$.pos = creaVarTemp();
+                                    emite(
+                                        RESTO,
+                                        crArgPos( $1.pos ),
+                                        crArgPos( $3.pos ),
+                                        crArgPos( $$.pos )
+                                    );
+                                } else {
+                                    $$.tipo = T_ERROR;
+                                }
+                            } |
                             multiplicativeExpression multiplicativeOperator
                                                                unaryExpression {
                                 // Todas las variables deben declararse antes de
@@ -747,8 +810,8 @@ suffixedExpression: ID_ SQBROP_ expression SQBRCL_ {
 
 logicalOperator:        AND_ { $$ = 0; }      | OR_  { $$ = 1; } ; // Jarcode xd
 equalityOperator:       EQ_  { $$ = EIGUAL; } | NEQ_ { $$ = EDIST; };
-relationalOperator:     GT_  { $$ = EMAY; } | LT_  { $$ = EMEN; }  |
-                        GEQ_ { $$ = EMAYEQ; }   | LEQ_ { $$ = EMENEQ; };
+relationalOperator:     GT_  { $$ = EMAY; }   | LT_  { $$ = EMEN; }  |
+                        GEQ_ { $$ = EMAYEQ; } | LEQ_ { $$ = EMENEQ; };
 additiveOperator:       ADD_ { $$ = ESUM; }   | SUB_ { $$ = EDIF; };
 multiplicativeOperator: MUL_ { $$ = EMULT; }  | DIV_ { $$ = EDIVI; };
 unaryOperator:          ADD_ { $$ = NOP; }    | SUB_ { $$ = ESIG; } |

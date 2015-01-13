@@ -68,6 +68,11 @@ closingBrace \}
 openingBracket \[
 closingBracket \]
 
+doClause do
+whileClause while
+
+modOperator \%
+
 %%
 
 "\n"                                {}
@@ -107,6 +112,10 @@ closingBracket \]
 
 {openingBracket}                    { return SQBROP_; }
 {closingBracket}                    { return SQBRCL_; }
+
+{doClause}                          { return DO_; }
+{whileClause}                       { return WHILE_; }
+{modOperator}                       { return MOD_; }
 
 {identifier}                        {
 										if ( strlen( yytext ) > 14 ) {
