@@ -1,0 +1,45 @@
+  0 EASIG     i:   0  ,          ,  p:   3  
+  1 EASIG     i:   1  ,          ,  p:   4  
+  2 ESIG      p:   4  ,          ,  p:   5  
+  3 EVA       p:   0  ,  p:   3  ,  p:   5  
+  4 EASIG     i:   1  ,          ,  p:   6  
+  5 EASIG     i:   5  ,          ,  p:   7  
+  6 EVA       p:   0  ,  p:   6  ,  p:   7  
+  7 EASIG     i:   2  ,          ,  p:   8  
+  8 EASIG     i:  25  ,          ,  p:   9  
+  9 EVA       p:   0  ,  p:   8  ,  p:   9  
+ 10 EASIG     i:   0  ,          ,  p:  10  
+ 11 EAV       p:   0  ,  p:  10  ,  p:  11  
+ 12 EWRITE            ,          ,  p:  11  
+ 13 EASIG     i:   1  ,          ,  p:  12  
+ 14 EAV       p:   0  ,  p:  12  ,  p:  13  
+ 15 EWRITE            ,          ,  p:  13  
+ 16 EASIG     i:   2  ,          ,  p:  14  
+ 17 EAV       p:   0  ,  p:  14  ,  p:  15  
+ 18 EWRITE            ,          ,  p:  15  
+ 19 EASIG     i:   1  ,          ,  p:  17  
+ 20 ESIG      p:  17  ,          ,  p:  18  
+ 21 EASIG     p:  18  ,          ,  p:  16  
+ 22 EASIG     p:  16  ,          ,  p:  19  
+ 23 EWRITE            ,          ,  p:  19  
+ 24 EASIG     i:   7  ,          ,  p:  20  
+ 25 EASIG     p:  20  ,          ,  p:  16  
+ 26 EASIG     p:  16  ,          ,  p:  21  
+ 27 EWRITE            ,          ,  p:  21  
+ 28 EASIG     i:   0  ,          ,  p:  22  
+ 29 EASIG     p:  22  ,          ,  p:  16  
+ 30 EASIG     p:  16  ,          ,  p:  23  
+ 31 EASIG     i:   3  ,          ,  p:  24  
+ 32 EASIG     i:   1  ,          ,  p:  25  
+ 33 EMEN      p:  23  ,  p:  24  ,  e:  35  
+ 34 EASIG     i:   0  ,          ,  p:  25  
+ 35 EIGUAL    p:  25  ,  i:   1  ,  e:  40  
+ 36 GOTOS             ,          ,  e:  44  
+ 37 EASIG     p:  16  ,          ,  p:  26  
+ 38 ESUM      p:  16  ,  i:   1  ,  p:  16  
+ 39 GOTOS             ,          ,  i:  30  
+ 40 EASIG     p:  16  ,          ,  p:  27  
+ 41 EAV       p:   0  ,  p:  27  ,  p:  28  
+ 42 EWRITE            ,          ,  p:  28  
+ 43 GOTOS             ,          ,  i:  37  
+ 44 FIN               ,          ,          

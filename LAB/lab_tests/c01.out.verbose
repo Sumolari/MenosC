@@ -1,0 +1,86 @@
+// init
+  0 EASIG     i:   1  ,          ,  p:   3  
+  1 EASIG     p:   3  ,          ,  p:   2  
+
+// for loop
+// for init
+// for condition
+  2 EASIG     p:   2  ,          ,  p:   4  
+  3 EIGUAL    p:   4  ,  i:   1  ,  e:   6  // goto main loop
+  4 GOTOS             ,          ,  e:  55  // goto endfor
+// for update
+  5 GOTOS             ,          ,  i:   2  // goto for condition
+
+// for main loop
+  6 EREAD             ,          ,  p:   0  
+  7 EREAD             ,          ,  p:   1  
+// first if
+// first if condition
+  // t7 = x != y
+  8 EASIG     p:   0  ,          ,  p:   5  
+  9 EASIG     p:   1  ,          ,  p:   6  
+ 10 EASIG     i:   1  ,          ,  p:   7  
+ 11 EDIST     p:   5  ,  p:   6  ,  e:  13  
+ 12 EASIG     i:   0  ,          ,  p:   7  
+  // t10 = x != 0
+ 13 EASIG     p:   0  ,          ,  p:   8  
+ 14 EASIG     i:   0  ,          ,  p:   9  
+ 15 EASIG     i:   1  ,          ,  p:  10  
+ 16 EDIST     p:   8  ,  p:   9  ,  e:  18  
+ 17 EASIG     i:   0  ,          ,  p:  10  
+  // t11 = t7 || t10
+ 18 EASIG     i:   1  ,          ,  p:  11  
+ 19 EIGUAL    p:   7  ,  i:   1  ,  e:  22  
+ 20 EIGUAL    p:  10  ,  i:   1  ,  e:  22  
+ 21 EASIG     i:   0  ,          ,  p:  11  
+ 22 EIGUAL    p:  11  ,  i:   0  ,  e:  54  // if condition false goto else
+// first if body
+// second if
+// second if condition
+  // t14 = x == 0
+ 23 EASIG     p:   0  ,          ,  p:  12  
+ 24 EASIG     i:   0  ,          ,  p:  13  
+ 25 EASIG     i:   1  ,          ,  p:  14  
+ 26 EIGUAL    p:  12  ,  p:  13  ,  e:  28  
+ 27 EASIG     i:   0  ,          ,  p:  14  
+  // t15 = !t14
+ 28 EDIF      i:   1  ,  p:  14  ,  p:  15  
+ 29 EIGUAL    p:  15  ,  i:   0  ,  e:  53  // if condition false goto else
+// second if body
+// third if
+// third if condition
+ 30 EASIG     p:   0  ,          ,  p:  16  
+ 31 EASIG     p:   1  ,          ,  p:  17  
+ 32 EASIG     i:   1  ,          ,  p:  18  
+ 33 EIGUAL    p:  16  ,  p:  17  ,  e:  35  
+ 34 EASIG     i:   0  ,          ,  p:  18  
+ 35 EASIG     p:   0  ,          ,  p:  19  
+ 36 EASIG     i:   0  ,          ,  p:  20  
+ 37 EASIG     i:   1  ,          ,  p:  21  
+ 38 EMAY      p:  19  ,  p:  20  ,  e:  40  
+ 39 EASIG     i:   0  ,          ,  p:  21  
+ 40 EASIG     i:   0  ,          ,  p:  22  
+ 41 EIGUAL    p:  18  ,  i:   0  ,  e:  44  
+ 42 EIGUAL    p:  21  ,  i:   0  ,  e:  44  
+ 43 EASIG     i:   1  ,          ,  p:  22  
+ 44 EIGUAL    p:  22  ,  i:   0  ,  e:  50  // if condition false goto else
+// third if body
+ 45 EASIG     i:   1  ,          ,  p:  23  
+ 46 EWRITE            ,          ,  p:  23  
+ 47 EASIG     i:   0  ,          ,  p:  24  
+ 48 EASIG     p:  24  ,          ,  p:   2  
+ 49 GOTOS             ,          ,  e:  52  // goto third endif
+// third else body
+ 50 EASIG     i:   0  ,          ,  p:  25  
+ 51 EWRITE            ,          ,  p:  25  
+// third endif
+ 52 GOTOS             ,          ,  e:  53  // goto second endif
+// second else body
+// second endif
+ 53 GOTOS             ,          ,  e:  54  // goto first endif
+// first else body
+// first endif
+// end for main loop (goto update)
+ 54 GOTOS             ,          ,  i:   5  
+// endfor
+ 55 FIN               ,          ,          
