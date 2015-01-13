@@ -68,8 +68,8 @@ closingBrace \}
 openingBracket \[
 closingBracket \]
 
-doClause do
-whileClause while
+doLoop do
+whileLoop while
 
 modOperator \%
 
@@ -113,8 +113,8 @@ modOperator \%
 {openingBracket}                    { return SQBROP_; }
 {closingBracket}                    { return SQBRCL_; }
 
-{doClause}                          { return DO_; }
-{whileClause}                       { return WHILE_; }
+{doLoop}                            { return DO_; }
+{whileLoop}                         { return WHILE_; }
 {modOperator}                       { return MOD_; }
 
 {identifier}                        {
