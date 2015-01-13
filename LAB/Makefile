@@ -60,6 +60,12 @@ test:
 	./analizador ./lab_tests/c04.c       tmp ; diff ./lab_tests/c04.out tmp.c3d
 	./analizador ./lab_tests/c05.c       tmp ; diff ./lab_tests/c05.out tmp.c3d
 	./analizador ./lab_tests/c06.c       tmp ; diff ./lab_tests/c06.out tmp.c3d
+	./analizador ./extra_tests/e.1.c    tmp ; diff ./extra_tests/e.1.out tmp.c3d
+	./analizador ./extra_tests/e.2.c    tmp ; diff ./extra_tests/e.2.out tmp.c3d
+	./analizador ./extra_tests/e.3.c    tmp ; diff ./extra_tests/e.3.out tmp.c3d
+	./analizador ./extra_tests/e.4.c    tmp ; diff ./extra_tests/e.4.out tmp.c3d
+	./analizador ./extra_tests/e.5.c    tmp ; diff ./extra_tests/e.5.out tmp.c3d
+	./analizador ./extra_tests/e.6.c    tmp ; diff ./extra_tests/e.6.out tmp.c3d
 
 
 quicktest: clean build dotest

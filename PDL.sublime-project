@@ -18,6 +18,9 @@
 		"name": "Sources",
 		"path": "LAB/src"
 	}, {
+		"name": "Tests (Extra)",
+		"path": "LAB/extra_tests"
+	}, {
 		"name": "Compilador",
 		"path": "LAB",
 		"folder_exclude_patterns": [
