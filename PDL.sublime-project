@@ -24,8 +24,8 @@
 		"name": "Compilador",
 		"path": "LAB",
 		"folder_exclude_patterns": [
-			"bison_ii_tests", "lab_tests", "tests", "tmp", "src", "lib",
-			"include", "bin"
+			"bison_ii_tests", "extra_tests", "lab_tests", "tests", "tmp", "src",
+			"lib", "include", "bin"
 		],
 		"file_exclude_patterns": [ "*.tgz" ]
 	}, {
