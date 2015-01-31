@@ -1,5 +1,7 @@
 .PHONY: fresh clean all
 
+all: clean build test
+
 build-lexico:
 	flex -olexico.c src/lexico.l
 	mv lexico.c tmp/
@@ -83,5 +85,3 @@ clean-tmp:
 	mkdir tmp
 clean: clean-tmp clean-analizer
 
-
-all: clean build test
