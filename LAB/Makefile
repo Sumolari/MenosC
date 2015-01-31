@@ -21,7 +21,7 @@ clean-analizer:
 	rm -f tmp.c3d
 compile-analizer:
 	gcc -oanalizador src/principal.c tmp/lexico.c tmp/sintaxis.c \
-	                                        -L./lib -I./include -lfl -ltds -lgci
+	                                        -L./lib -I./include -ltds -lgci
 
 
 build: clean build-sintaxis build-lexico compile-analizer

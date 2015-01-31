@@ -26,6 +26,8 @@ void yywarn( const char * msg )
 	fprintf( stdout, "Linea %d: %s\n", yylineno, msg );
 }
 /*****************************************************************************/
+void yywrap() {}    /* Para poder compilar sin -lfl (problematico en CentOS) */
+/*****************************************************************************/
 int main( int argc, char **argv )
 /* Gestiona la linea de comandos e invoca al analizador sintactico-semantico.*/
 {
