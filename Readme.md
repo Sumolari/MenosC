@@ -1,3 +1,7 @@
+[![Build status](https://magnum-ci.com/status/3463713cc78f3b0809d755c6813bf065.png)][1]
+[1]: https://magnum-ci.com/public/80e42a9221aa11353265/builds "Magnum CI"
+
+
 # Vagrant
 
 Para usar la máquina virtual es necesario instalar Virtualbox y a continuación Vagrant.
