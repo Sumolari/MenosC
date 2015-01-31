@@ -7,6 +7,7 @@ VAGRANTFILE_API_VERSION = "2"
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.box = "parallels/ubuntu-13.10"
+  #config.vm.box = "parallels/centos-6.5"
 
   config.vm.synced_folder "./LAB", "/LAB"
 
@@ -22,5 +23,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.provision "shell",
     inline: "sudo apt-get update && sudo apt-get -q -y install flex bison lib32z1"
+
+  #config.vm.provision "shell",
+  #  inline: "yum -y update && yum -y install flex bison lib32z1"
 
 end
