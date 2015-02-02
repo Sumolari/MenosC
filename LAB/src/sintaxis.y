@@ -822,11 +822,11 @@ incrementOperator:      INC_ { $$ = 1; }      | DEC_ { $$ = -1; };
 
 /*****************************************************************************/
 int tiposEquivalentes( int tipo_1, int tipo_2 ) {
-    tiposEquivalentesExtended( tipo_1, tipo_2, 0 );
+    return tiposEquivalentesExtended( tipo_1, tipo_2, 0 );
 }
 
 int tiposEquivalentesSilent( int tipo_1, int tipo_2 ) {
-    tiposEquivalentesExtended( tipo_1, tipo_2, 1 );
+    return tiposEquivalentesExtended( tipo_1, tipo_2, 1 );
 }
 
 int tiposEquivalentesExtended( int tipo_1, int tipo_2, int onlyCheck ) {
@@ -855,11 +855,11 @@ int existeTDS( char *nom ) {
 }
 /*****************************************************************************/
 int comprobarTipo( char *nom, int tipo_esperado ) {
-    comprobarTipoExtended( nom, tipo_esperado, 0 );
+    return comprobarTipoExtended( nom, tipo_esperado, 0 );
 }
 
 int comprobarTipoSilent( char *nom, int tipo_esperado ) {
-    comprobarTipoExtended( nom, tipo_esperado, 1 );
+    return comprobarTipoExtended( nom, tipo_esperado, 1 );
 }
 
 int comprobarTipoExtended( char *nom, int tipo_esperado, int onlyCheck ) {
